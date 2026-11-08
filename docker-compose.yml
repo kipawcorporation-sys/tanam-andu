@@ -1,0 +1,99 @@
+services:
+  # ── Backend Application (PHP 8.2-FPM) ──
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: tanampohon_app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+      - storage_data:/var/www/html/storage
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE:-tanampohon_db}
+      DB_USERNAME: ${DB_USERNAME:-root}
+      DB_PASSWORD: ${DB_PASSWORD:-root}
+      APP_URL: ${APP_URL:-http://localhost:8000}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - tanampohon_net
+
+  # ── Web Server (Nginx Reverse Proxy) ──
+  web:
+    image: nginx:alpine
+    container_name: tanampohon_web
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8000}:80"
+    volumes:
+      - .:/var/www/html:ro
+      - storage_data:/var/www/html/storage:ro
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+    networks:
+      - tanampohon_net
+
+  # ── Database (MariaDB 10.11) ──
+  db:
+    image: mariadb:10.11
+    container_name: tanampohon_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
+      MYSQL_DATABASE: ${DB_DATABASE:-tanampohon_db}
+      MYSQL_USER: ${DB_USERNAME:-tanampohon_user}
+      MYSQL_PASSWORD: ${DB_USER_PASSWORD:-tanampohon_secret}
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./database.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+    ports:
+      - "${DB_PORT_FORWARD:-3307}:3306"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tanampohon_net
+
+  # ── Otomasi Terjadwal (Cron Job Runner) ──
+  cron:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: tanampohon_cron
+    restart: unless-stopped
+    working_dir: /var/www/html
+    command: ["/bin/sh", "-c", "while true; do php /var/www/html/cron/run.php; sleep 900; done"]
+    volumes:
+      - .:/var/www/html
+      - storage_data:/var/www/html/storage
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE:-tanampohon_db}
+      DB_USERNAME: ${DB_USERNAME:-root}
+      DB_PASSWORD: ${DB_PASSWORD:-root}
+    depends_on:
+      app:
+        condition: service_started
+      db:
+        condition: service_healthy
+    networks:
+      - tanampohon_net
+
+networks:
+  tanampohon_net:
+    driver: bridge
+
+volumes:
+  mariadb_data:
+    driver: local
+  storage_data:
+    driver: local

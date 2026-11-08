@@ -1,0 +1,12 @@
+# =============================================================
+# TanamPohon.id - Root .htaccess
+# Blokir akses langsung ke semua file kecuali folder public/
+# =============================================================
+
+# Tolak akses ke semua file dan folder di root
+RewriteEngine On
+
+# Jika request bukan ke folder public, tolak akses
+RewriteCond %{REQUEST_URI} !^/public/ [NC]
+RewriteCond %{REQUEST_URI} !^/public$ [NC]
+RewriteRule ^(.*)$ public/$1 [L]

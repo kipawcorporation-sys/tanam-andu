@@ -1,0 +1,24 @@
+# Environment variables (JANGAN DI-PUSH UNTUK KEAMANAN)
+.env
+.env.backup
+*.env.local
+
+# Composer vendor
+/vendor/
+
+# Arsip tar / zip
+*.tar.gz
+*.zip
+
+# Storage logs & cache
+/storage/logs/*.log
+/storage/cache/*
+!/storage/cache/.gitkeep
+!/storage/logs/.gitkeep
+
+# Temporary & debug files
+*.log
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

@@ -1,0 +1,51 @@
+# =============================================================
+# TanamPohon.id - Public .htaccess
+# URL rewriting ke index.php (front controller pattern)
+# =============================================================
+
+RewriteEngine On
+
+# Jika HTTPS tersedia, paksa redirect ke HTTPS (uncomment di production)
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Jika file atau direktori ada, jangan rewrite
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Arahkan semua request ke index.php
+RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
+
+# Blokir akses ke file sensitif
+<FilesMatch "\.(env|log|sql|md|json|lock|yml|yaml|xml|ini|sh|bak|tmp)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Nonaktifkan directory listing
+Options -Indexes
+
+# Set header keamanan
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Kompresi Gzip
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascript application/json
+</IfModule>
+
+# Cache static assets
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/webp "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+    ExpiresByType text/css "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+    ExpiresByType application/x-font-woff2 "access plus 1 month"
+</IfModule>
