@@ -65,25 +65,28 @@ if (!function_exists('url')) {
             return $path;
         }
 
-        $baseUrl = rtrim(env('APP_URL', ''), '/');
+        // Deteksi apakah koneksi saat ini aman (HTTPS)
+        $isHttps = (
+            (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off') ||
+            (isset($_SERVER['SERVER_PORT']) && (int)$_SERVER['SERVER_PORT'] === 443) ||
+            (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https') ||
+            (!empty($_SERVER['HTTP_X_FORWARDED_SSL']) && strtolower($_SERVER['HTTP_X_FORWARDED_SSL']) === 'on') ||
+            (!empty($_SERVER['HTTP_CF_VISITOR']) && str_contains($_SERVER['HTTP_CF_VISITOR'], 'https')) ||
+            (!empty($_SERVER['HTTP_X_FORWARDED_PORT']) && (int)$_SERVER['HTTP_X_FORWARDED_PORT'] === 443)
+        );
 
-        // Auto-detect host & protokol jika:
-        // 1. APP_URL kosong
-        // 2. APP_URL masih placeholder (misal: IP_SERVER atau IP_PROXMOX)
-        // 3. Request masuk via HTTP_HOST yang berbeda dari konfigurasi
-        if (empty($baseUrl) || str_contains($baseUrl, 'IP_SERVER') || str_contains($baseUrl, 'IP_PROXMOX') || (isset($_SERVER['HTTP_HOST']) && !str_contains($baseUrl, $_SERVER['HTTP_HOST']))) {
-            if (!empty($_SERVER['HTTP_HOST'])) {
-                $isHttps = (
-                    (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
-                    ($_SERVER['SERVER_PORT'] ?? 80) == 443 ||
-                    (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ||
-                    (!empty($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] === 'on') ||
-                    (!empty($_SERVER['HTTP_CF_VISITOR']) && str_contains($_SERVER['HTTP_CF_VISITOR'], 'https'))
-                );
-                $protocol = $isHttps ? 'https://' : 'http://';
-                $baseUrl = $protocol . $_SERVER['HTTP_HOST'];
-            } else {
+        $protocol = $isHttps ? 'https://' : 'http://';
+
+        // Selalu prioritaskan HTTP_HOST aktif dari request browser / reverse proxy
+        if (!empty($_SERVER['HTTP_HOST'])) {
+            $baseUrl = $protocol . $_SERVER['HTTP_HOST'];
+        } else {
+            $baseUrl = rtrim(env('APP_URL', 'http://localhost:8000'), '/');
+            if (str_contains($baseUrl, 'IP_SERVER') || str_contains($baseUrl, 'IP_PROXMOX')) {
                 $baseUrl = 'http://localhost:8000';
+            }
+            if ($isHttps && str_starts_with($baseUrl, 'http://')) {
+                $baseUrl = 'https://' . substr($baseUrl, 7);
             }
         }
 
@@ -109,6 +112,14 @@ if (!function_exists('asset')) {
             return $path;
         }
 
+        // Jika path mengarah ke storage publik atau uploads
+        if (str_starts_with($path, 'storage/')) {
+            return '/' . $path;
+        }
+        if (str_starts_with($path, 'uploads/')) {
+            return '/storage/' . $path;
+        }
+
         // Jika path sudah diawali dengan 'assets/', kembalikan /assets/...
         if (str_starts_with($path, 'assets/')) {
             return '/' . $path;
@@ -130,7 +141,7 @@ if (!function_exists('storage_url')) {
     {
         $path = ltrim($path, '/');
 
-        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://') || str_starts_with($path, '//')) {
             return $path;
         }
 

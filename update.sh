@@ -20,8 +20,18 @@ echo -e "${BLUE}======================================================${NC}"
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$PROJECT_DIR"
 
-# 1. Cek Docker & Docker Compose
-echo -e "\n${YELLOW}[1/6] Memeriksa Docker & Docker Compose...${NC}"
+# 1. Cek & Tarik Kode Terbaru dari Git (Jika Repositori Git)
+echo -e "\n${YELLOW}[1/7] Memeriksa & menarik kode terbaru dari GitHub...${NC}"
+if [ -d "$PROJECT_DIR/.git" ]; then
+    echo -e "${BLUE}Menjalankan: git pull origin main...${NC}"
+    git pull origin main || echo -e "${YELLOW}Perhatian: git pull gagal atau ada konflik lokal, melanjutkan build...${NC}"
+    echo -e "${GREEN}✓ Kode aplikasi siap.${NC}"
+else
+    echo -e "${YELLOW}Bukan repositori git, melewati tahap git pull.${NC}"
+fi
+
+# 2. Cek Docker & Docker Compose
+echo -e "\n${YELLOW}[2/7] Memeriksa Docker & Docker Compose...${NC}"
 if ! command -v docker &> /dev/null; then
     echo -e "${RED}Docker belum terpasang. Memasang Docker Engine...${NC}"
     curl -fsSL https://get.docker.com | sh
@@ -37,8 +47,8 @@ else
 fi
 echo -e "${GREEN}✓ Docker & Docker Compose siap digunakan.${NC}"
 
-# 2. Cek File Environment (.env)
-echo -e "\n${YELLOW}[2/6] Memeriksa file konfigurasi lingkungan (.env)...${NC}"
+# 3. Cek File Environment (.env)
+echo -e "\n${YELLOW}[3/7] Memeriksa file konfigurasi lingkungan (.env)...${NC}"
 if [ ! -f "$PROJECT_DIR/.env" ]; then
     if [ -f "$PROJECT_DIR/.env.docker.example" ]; then
         echo -e "${YELLOW}File .env belum ada. Menyalin dari .env.docker.example...${NC}"
@@ -51,8 +61,8 @@ else
     echo -e "${GREEN}✓ File .env sudah ada.${NC}"
 fi
 
-# 3. Pastikan Struktur Direktori Storage & Permission
-echo -e "\n${YELLOW}[3/6] Memeriksa permission direktori storage & uploads...${NC}"
+# 4. Pastikan Struktur Direktori Storage & Permission
+echo -e "\n${YELLOW}[4/7] Memeriksa permission direktori storage & uploads...${NC}"
 mkdir -p "$PROJECT_DIR/storage/uploads/payment_proofs" \
          "$PROJECT_DIR/storage/uploads/qris" \
          "$PROJECT_DIR/storage/uploads/news" \
@@ -69,7 +79,7 @@ if [ "$(id -u)" -eq 0 ]; then
 fi
 echo -e "${GREEN}✓ Permission storage berhasil disetel.${NC}"
 
-# 4. Backup Database Singkat (Opsional jika container DB sedang berjalan)
+# Backup Database Singkat (Opsional jika container DB sedang berjalan)
 if [ "$1" == "--backup" ] || [ "$1" == "-b" ]; then
     echo -e "\n${YELLOW}[Bonus] Membuat backup database sebelum update...${NC}"
     BACKUP_FILE="$PROJECT_DIR/backup_$(date +%Y%m%d_%H%M%S).sql"
@@ -80,11 +90,11 @@ if [ "$1" == "--backup" ] || [ "$1" == "-b" ]; then
 fi
 
 # 5. Build Ulang & Jalankan Container
-echo -e "\n${YELLOW}[4/6] Melakukan build & restart container...${NC}"
+echo -e "\n${YELLOW}[5/7] Melakukan build & restart container...${NC}"
 $DOCKER_COMPOSE up -d --build --remove-orphans
 
 # 6. Verifikasi Health & Status
-echo -e "\n${YELLOW}[5/6] Menunggu container aktif dan sehat...${NC}"
+echo -e "\n${YELLOW}[6/7] Menunggu container aktif dan sehat...${NC}"
 sleep 3
 
 # Opsi re-import database jika diberikan argumen --import-db
@@ -96,7 +106,7 @@ if [ "$1" == "--import-db" ]; then
     fi
 fi
 
-echo -e "\n${YELLOW}[6/6] Status Container Saat Ini:${NC}"
+echo -e "\n${YELLOW}[7/7] Status Container Saat Ini:${NC}"
 $DOCKER_COMPOSE ps
 
 echo -e "\n${BLUE}======================================================${NC}"
