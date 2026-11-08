@@ -102,7 +102,7 @@ $DOCKER_COMPOSE ps
 echo -e "\n${BLUE}======================================================${NC}"
 echo -e "${GREEN}  ✓ Pembaruan Berhasil Selesai!${NC}"
 echo -e "${BLUE}======================================================${NC}"
-echo -e "Aplikasi dapat diakses di: ${GREEN}http://IP_SERVER:8000${NC}"
+echo -e "Aplikasi dapat diakses di: ${GREEN}http://IP_SERVER:8098${NC}"
 echo -e "Login Admin: ${YELLOW}admin@tanampohon.id${NC} | Password: ${YELLOW}admin123${NC}"
 echo -e "Log aktivitas: jalankan ${BLUE}docker compose logs -f${NC}\n"
 
