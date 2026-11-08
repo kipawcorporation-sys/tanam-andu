@@ -194,7 +194,7 @@ class FonnteService
             if (empty($customerPhone)) return false;
 
             $totalRp = 'Rp ' . number_format((float)$payment['grand_total'], 0, ',', '.');
-            $siteUrl = (defined('BASE_URL') ? BASE_URL : 'http://localhost:8000');
+            $siteUrl = function_exists('url') ? url('/') : 'http://localhost:8000';
             $invLink = $siteUrl . '/pembayaran/' . $payment['invoice_no'];
 
             $msg = '';
@@ -286,7 +286,7 @@ class FonnteService
              . "☕ Belanja kopi spesialti Kerenceng\n"
              . "👕 Dapat merchandise eksklusif\n\n"
              . "Mari mulai perjalanan hijau Anda! 💚\n"
-             . "🔗 " . (defined('BASE_URL') ? BASE_URL : 'http://localhost:8000') . "/dashboard\n\n"
+             . "🔗 " . (function_exists('url') ? url('/dashboard') : 'http://localhost:8000/dashboard') . "\n\n"
              . "_TanamPohon.id_";
 
         return $this->send($phone, $msg)['success'];

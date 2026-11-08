@@ -51,14 +51,42 @@ if (!function_exists('config')) {
 if (!function_exists('url')) {
     /**
      * Generate URL lengkap aplikasi
+     * Mendukung auto-detect domain, reverse proxy (Cloudflare/Nginx), dan HTTPS
      *
      * @param string $path Path relatif
      * @return string
      */
     function url(string $path = ''): string
     {
-        $baseUrl = rtrim(env('APP_URL', 'http://localhost/cocok_tanam/public'), '/');
         $path = ltrim($path, '/');
+
+        // Jika path sudah berupa URL absolut eksternal, kembalikan langsung
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://') || str_starts_with($path, '//')) {
+            return $path;
+        }
+
+        $baseUrl = rtrim(env('APP_URL', ''), '/');
+
+        // Auto-detect host & protokol jika:
+        // 1. APP_URL kosong
+        // 2. APP_URL masih placeholder (misal: IP_SERVER atau IP_PROXMOX)
+        // 3. Request masuk via HTTP_HOST yang berbeda dari konfigurasi
+        if (empty($baseUrl) || str_contains($baseUrl, 'IP_SERVER') || str_contains($baseUrl, 'IP_PROXMOX') || (isset($_SERVER['HTTP_HOST']) && !str_contains($baseUrl, $_SERVER['HTTP_HOST']))) {
+            if (!empty($_SERVER['HTTP_HOST'])) {
+                $isHttps = (
+                    (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
+                    ($_SERVER['SERVER_PORT'] ?? 80) == 443 ||
+                    (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ||
+                    (!empty($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] === 'on') ||
+                    (!empty($_SERVER['HTTP_CF_VISITOR']) && str_contains($_SERVER['HTTP_CF_VISITOR'], 'https'))
+                );
+                $protocol = $isHttps ? 'https://' : 'http://';
+                $baseUrl = $protocol . $_SERVER['HTTP_HOST'];
+            } else {
+                $baseUrl = 'http://localhost:8000';
+            }
+        }
+
         return $path === '' ? $baseUrl : $baseUrl . '/' . $path;
     }
 }
@@ -66,6 +94,8 @@ if (!function_exists('url')) {
 if (!function_exists('asset')) {
     /**
      * Generate URL aset publik (CSS, JS, gambar)
+     * Menggunakan path root-relatif (/assets/...) agar selalu valid
+     * pada semua protokol (HTTP/HTTPS) dan bebas dari kendala Mixed Content.
      *
      * @param string $path Path relatif di dalam folder public/assets/
      * @return string
@@ -73,11 +103,18 @@ if (!function_exists('asset')) {
     function asset(string $path): string
     {
         $path = ltrim($path, '/');
-        // Jika path sudah diawali dengan 'assets/', jangan ditambahkan lagi
-        if (str_starts_with($path, 'assets/')) {
-            return url($path);
+
+        // Jika URL eksternal (CDN), kembalikan langsung
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://') || str_starts_with($path, '//')) {
+            return $path;
         }
-        return url('assets/' . $path);
+
+        // Jika path sudah diawali dengan 'assets/', kembalikan /assets/...
+        if (str_starts_with($path, 'assets/')) {
+            return '/' . $path;
+        }
+
+        return '/assets/' . $path;
     }
 }
 
@@ -91,7 +128,17 @@ if (!function_exists('storage_url')) {
      */
     function storage_url(string $path): string
     {
-        return url('storage/uploads/' . ltrim($path, '/'));
+        $path = ltrim($path, '/');
+
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return $path;
+        }
+
+        if (str_starts_with($path, 'storage/')) {
+            return '/' . $path;
+        }
+
+        return '/storage/' . $path;
     }
 }
 
