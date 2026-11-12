@@ -113,6 +113,8 @@ class Cart
                     'product_id'      => $variant['product_id'],
                     'product_name'    => $variant['product_name'],
                     'product_slug'    => $variant['product_slug'],
+                    'category'        => $variant['category'] ?? '',
+                    'primary_image'   => $variant['primary_image'] ?? null,
                     'size'            => $variant['size'],
                     'color'           => $variant['color'],
                     'price'           => (float)$variant['price'],

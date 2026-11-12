@@ -31,9 +31,28 @@
                                     <tr>
                                         <td>
                                             <div class="d-flex align-items-center gap-3">
-                                                <div class="bg-light p-2 rounded-3 text-center fs-3" style="width: 54px; height: 54px;">
-                                                    👕
-                                                </div>
+                                                <?php
+                                                    /* ── Tentukan gambar produk di keranjang ── */
+                                                    $cartImg = null;
+                                                    if (!empty($item['primary_image'])) {
+                                                        $cartImg = '/' . ltrim($item['primary_image'], '/');
+                                                    } else {
+                                                        $cat = $item['category'] ?? '';
+                                                        $fallbackMap = [
+                                                            'kopi'   => '/assets/images/kopi-arabika-kerenceng.jpg',
+                                                            'kaos'   => '/assets/images/kaos-plant-for-fun.jpg',
+                                                            'bundle' => '/assets/images/kaos-plant-for-fun.jpg',
+                                                        ];
+                                                        $cartImg = $fallbackMap[$cat] ?? '/assets/images/kaos-plant-for-fun.jpg';
+                                                    }
+                                                ?>
+                                                <a href="<?= url('/toko/' . $item['product_slug']) ?>" class="flex-shrink-0">
+                                                    <img src="<?= e($cartImg) ?>"
+                                                         alt="<?= e($item['product_name']) ?>"
+                                                         width="58" height="58"
+                                                         style="width:58px;height:58px;object-fit:cover;border-radius:10px;border:1px solid #e9ecef;"
+                                                         onerror="this.onerror=null;this.src='/assets/images/kaos-plant-for-fun.jpg'">
+                                                </a>
                                                 <div>
                                                     <h6 class="fw-bold text-dark mb-0">
                                                         <a href="<?= url('/toko/' . $item['product_slug']) ?>" class="text-dark text-decoration-none">

@@ -97,7 +97,10 @@ class Product extends Model
     public function getVariantById(int $variantId): array|false
     {
         $stmt = $this->db->prepare("
-            SELECT pv.*, p.name as product_name, p.slug as product_slug, p.weight_gram, p.category
+            SELECT pv.*, p.name as product_name, p.slug as product_slug, p.weight_gram, p.category,
+                   (SELECT image_path FROM product_images
+                    WHERE product_id = p.id AND is_primary = 1
+                    ORDER BY sort_order ASC LIMIT 1) as primary_image
             FROM product_variants pv
             JOIN products p ON pv.product_id = p.id
             WHERE pv.id = :id AND pv.is_active = 1 AND p.is_active = 1
