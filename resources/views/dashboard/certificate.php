@@ -647,14 +647,25 @@
                         <span class="seal-brand">Plant For Fun</span>
                     </div>
 
+<?php
+$signerName = $cert['data']['signer_name'] ?? 'andu coffee';
+if (empty($signerName) || stripos($signerName, 'direktur') !== false || stripos($signerName, 'koordinator') !== false || stripos($signerName, 'tanampohon') !== false) {
+    $signerName = 'andu coffee';
+}
+$signerTitle = $cert['data']['signer_title'] ?? 'Plant For Fun &bull; Kerenceng Expedition';
+if (stripos($signerTitle, 'direktur') !== false) {
+    $signerTitle = 'Plant For Fun &bull; Kerenceng Expedition';
+}
+?>
+
                     <!-- Tanda Tangan Penyelenggara -->
                     <div class="cert-signature">
                         <div class="sig-handwritten">
-                            <?= e($cert['data']['signer_name'] ?? 'Koordinator Ekspedisi Kerenceng') ?>
+                            <?= e($signerName) ?>
                         </div>
                         <div class="sig-line"></div>
-                        <div class="sig-name"><?= e($cert['data']['signer_name'] ?? 'Koordinator Ekspedisi Kerenceng') ?></div>
-                        <div class="sig-title"><?= e($cert['data']['signer_title'] ?? 'Plant For Fun &bull; Kerenceng Expedition') ?></div>
+                        <div class="sig-name"><?= e($signerName) ?></div>
+                        <div class="sig-title"><?= $signerTitle ?></div>
                     </div>
                 </div>
 

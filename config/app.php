@@ -35,6 +35,10 @@ return [
     // Versi aplikasi
     'version' => '1.0.0',
 
+    // Penandatangan Sertifikat Resmi
+    'certificate_signer_name'  => env('CERTIFICATE_SIGNER_NAME', 'andu coffee'),
+    'certificate_signer_title' => env('CERTIFICATE_SIGNER_TITLE', 'Plant For Fun • Kerenceng Expedition'),
+
     // Email admin
     'admin_email' => env('ADMIN_EMAIL', 'admin@tanampohon.id'),
 

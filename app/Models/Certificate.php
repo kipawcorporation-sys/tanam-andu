@@ -63,8 +63,8 @@ class Certificate extends Model
             'total_co2_kg'       => $totalCo2,
             'donation_amount'    => $donation['total_amount'],
             'donation_date'      => $donation['created_at'],
-            'signer_name'        => config('app.certificate_signer_name', 'Koordinator Ekspedisi Kerenceng'),
-            'signer_title'       => 'Plant For Fun • Kerenceng Expedition',
+            'signer_name'        => config('app.certificate_signer_name', 'andu coffee'),
+            'signer_title'       => config('app.certificate_signer_title', 'Plant For Fun • Kerenceng Expedition'),
             'verify_url'         => url('/verifikasi-sertifikat/' . $certNumber),
         ];
 
@@ -144,8 +144,8 @@ class Certificate extends Model
             'event_date'         => $part['event_date'],
             'location'           => ($part['location_name'] ?? '') . ', ' . ($part['location_city'] ?? ''),
             'role'               => 'Relawan Penanaman Pohon',
-            'signer_name'        => config('app.certificate_signer_name', 'Koordinator Ekspedisi Kerenceng'),
-            'signer_title'       => 'Koordinator Ekspedisi Kerenceng • Plant For Fun',
+            'signer_name'        => config('app.certificate_signer_name', 'andu coffee'),
+            'signer_title'       => config('app.certificate_signer_title', 'Plant For Fun • Kerenceng Expedition'),
             'verify_url'         => url('/verifikasi-sertifikat/' . $certNumber),
         ];
 
@@ -199,6 +199,24 @@ class Certificate extends Model
     }
 
     /**
+     * Normalisasi data snapshot agar penandatangan selalu konsisten (andu coffee)
+     */
+    private function normalizeSnapshot(array $cert): array
+    {
+        $data = json_decode($cert['data_snapshot'] ?? '{}', true) ?: [];
+        $signer = $data['signer_name'] ?? '';
+        if ($signer === '' || stripos($signer, 'direktur') !== false || stripos($signer, 'koordinator') !== false || stripos($signer, 'tanampohon') !== false) {
+            $data['signer_name'] = config('app.certificate_signer_name', 'andu coffee');
+        }
+        $title = $data['signer_title'] ?? '';
+        if ($title === '' || stripos($title, 'direktur') !== false) {
+            $data['signer_title'] = config('app.certificate_signer_title', 'Plant For Fun • Kerenceng Expedition');
+        }
+        $cert['data'] = $data;
+        return $cert;
+    }
+
+    /**
      * Cari sertifikat berdasarkan ID
      *
      * @param int $id
@@ -211,7 +229,7 @@ class Certificate extends Model
         $cert = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($cert) {
-            $cert['data'] = json_decode($cert['data_snapshot'], true) ?: [];
+            $cert = $this->normalizeSnapshot($cert);
         }
 
         return $cert;
@@ -236,7 +254,7 @@ class Certificate extends Model
         $cert = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($cert) {
-            $cert['data'] = json_decode($cert['data_snapshot'], true) ?: [];
+            $cert = $this->normalizeSnapshot($cert);
         }
 
         return $cert;
@@ -259,7 +277,7 @@ class Certificate extends Model
         $cert = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($cert) {
-            $cert['data'] = json_decode($cert['data_snapshot'], true) ?: [];
+            $cert = $this->normalizeSnapshot($cert);
         }
 
         return $cert;
@@ -282,7 +300,7 @@ class Certificate extends Model
         $certs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         foreach ($certs as &$c) {
-            $c['data'] = json_decode($c['data_snapshot'], true) ?: [];
+            $c = $this->normalizeSnapshot($c);
         }
 
         return $certs;
