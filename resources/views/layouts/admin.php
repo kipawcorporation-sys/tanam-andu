@@ -481,7 +481,7 @@
                 <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 rounded-3" style="min-width: 200px;">
                     <li class="px-3 py-2 border-bottom">
                         <div class="fw-bold small"><?= htmlspecialchars(auth('name') ?? 'Admin') ?></div>
-                        <div class="text-muted" style="font-size: 11px;"><?= htmlspecialchars(auth('email') ?? 'admin@tanampohon.id') ?></div>
+                        <div class="text-muted" style="font-size: 11px;"><?= htmlspecialchars(auth('email') ?? 'admin@plantforfun.id') ?></div>
                     </li>
                     <li>
                         <a class="dropdown-item py-2 small" href="/admin/pengaturan">

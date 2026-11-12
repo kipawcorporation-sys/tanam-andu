@@ -73,7 +73,7 @@
                     <i class="bi bi-geo-alt-fill text-warning me-2"></i> Posko Kebon Kopi Kerenceng, Cicalengka, Kab. Bandung
                 </p>
                 <p class="text-secondary small mb-2">
-                    <i class="bi bi-envelope-fill text-warning me-2"></i> info@tanampohon.id
+                    <i class="bi bi-envelope-fill text-warning me-2"></i> info@plantforfun.id
                 </p>
                 <p class="text-secondary small mb-3">
                     <i class="bi bi-whatsapp text-warning me-2"></i> 0812-3456-7890

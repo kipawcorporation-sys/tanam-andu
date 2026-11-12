@@ -267,7 +267,7 @@ class AuthController extends Controller
                 error_log('[Fonnte Welcome Notification Error] ' . $te->getMessage());
             }
 
-            Session::flash('success', 'Pendaftaran berhasil! Selamat datang di keluarga TanamPohon.id.');
+            Session::flash('success', 'Pendaftaran berhasil! Selamat datang di keluarga Plant For Fun.');
             $this->redirect('/dashboard');
         } catch (\Exception $e) {
             Session::flash('error', 'Gagal mendaftar: ' . $e->getMessage());

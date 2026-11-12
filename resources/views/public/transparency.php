@@ -741,7 +741,7 @@ $lastUpdated = date('d M Y, H:i') . ' WIB';
             </span>
             <h3 class="fw-bold mb-2">Pastikan Sertifikat Anda Asli &amp; Terverifikasi</h3>
             <p style="color:rgba(255,255,255,.70);" class="mb-0">
-                Setiap sertifikat TanamPohon.id dilengkapi nomor seri unik dan QR code. Masukkan nomor
+                Setiap sertifikat Plant For Fun dilengkapi nomor seri unik dan QR code. Masukkan nomor
                 untuk mengecek keasliannya secara instan &mdash; terbuka untuk umum, tanpa login.
             </p>
         </div>

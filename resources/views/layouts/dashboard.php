@@ -276,7 +276,7 @@
                     <button type="button" class="btn btn-light d-lg-none" onclick="toggleSidebar()">
                         <i class="bi bi-list fs-5"></i>
                     </button>
-                    <h5 class="fw-bold mb-0 text-dark d-none d-sm-block">Area Peserta TanamPohon.id</h5>
+                    <h5 class="fw-bold mb-0 text-dark d-none d-sm-block">Area Peserta Plant For Fun</h5>
                 </div>
 
                 <div class="d-flex align-items-center gap-2">

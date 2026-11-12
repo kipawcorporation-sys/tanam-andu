@@ -515,7 +515,7 @@ class DashboardController extends Controller
         $referralUrl = url('/daftar?ref=' . urlencode($user['referral_code'] ?? ''));
 
         // Pesan ajakan siap bagikan ke sosial media
-        $shareText = "Yuk ikut bersama saya menanam pohon dan menjaga kelestarian bumi Indonesia di TanamPohon.id! Daftar lewat tautan ini dan dapatkan bonus poin: " . $referralUrl;
+        $shareText = "Yuk ikut bersama saya menanam pohon dan menjaga kelestarian bumi Indonesia di Plant For Fun! Daftar lewat tautan ini dan dapatkan bonus poin: " . $referralUrl;
 
         $this->view('dashboard/referral', [
             'pageTitle'     => 'Ajak Teman (Program Referral) - ' . config('app.name'),

@@ -158,12 +158,12 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function shareImpactWhatsApp() {
-    const text = 'Alhamdulillah, saya telah berdonasi <?= $totalTrees ?> pohon melalui TanamPohon.id untuk menghijaukan Indonesia dan menyerap estimasi <?= number_format($totalCo2, 1) ?> kg CO2/tahun. Yuk ikut ambil bagian di: ' + window.location.origin;
+    const text = 'Alhamdulillah, saya telah berdonasi <?= $totalTrees ?> pohon melalui Plant For Fun untuk menghijaukan Indonesia dan menyerap estimasi <?= number_format($totalCo2, 1) ?> kg CO2/tahun. Yuk ikut ambil bagian di: ' + window.location.origin;
     window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(text), '_blank');
 }
 
 function shareTreeCode(code, species) {
-    const text = 'Saya baru saja menanam pohon ' + species + ' dengan kode unik ' + code + ' di TanamPohon.id! Pantau di: ' + window.location.origin + '/peta-lokasi';
+    const text = 'Saya baru saja menanam pohon ' + species + ' dengan kode unik ' + code + ' di Plant For Fun! Pantau di: ' + window.location.origin + '/peta-lokasi';
     window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(text), '_blank');
 }
 </script>

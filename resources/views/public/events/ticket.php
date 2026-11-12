@@ -17,7 +17,7 @@
                 <div class="bg-success text-white p-4 text-center position-relative">
                     <span class="fs-1">🌱</span>
                     <h4 class="fw-bold mb-1">E-TICKET RESMI RELAWAN</h4>
-                    <p class="small mb-0 text-white-50">TanamPohon.id &bull; Gerakan Menghijaukan Indonesia</p>
+                    <p class="small mb-0 text-white-50">Plant For Fun &bull; Kerenceng Coffee Planting & Agroforestry Expedition</p>
                 </div>
 
                 <!-- Kode Tiket & Status -->

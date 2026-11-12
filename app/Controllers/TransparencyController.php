@@ -193,7 +193,7 @@ class TransparencyController extends Controller
         $certCount = (int)($stmtCert ? $stmtCert->fetchColumn() : 0);
 
         $this->view('public/transparency', [
-            'pageTitle'         => 'Laporan Transparansi Publik & Dampak Ekologis - TanamPohon.id',
+            'pageTitle'         => 'Laporan Transparansi Publik & Dampak Ekologis — Plant For Fun',
             'donationStats'     => $donationStats,
             'targetAmount'      => $targetAmount,
             'targetTrees'       => $targetTrees,
@@ -213,7 +213,7 @@ class TransparencyController extends Controller
             error_log('[TransparencyController] DB error: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
             // Fallback: render halaman dengan data kosong
             $this->view('public/transparency', [
-                'pageTitle'        => 'Laporan Transparansi - TanamPohon.id',
+                'pageTitle'        => 'Laporan Transparansi — Plant For Fun',
                 'donationStats'    => ['total_transactions' => 0, 'total_raised' => 0, 'total_trees_donated' => 0],
                 'targetAmount'     => 500000000,
                 'targetTrees'      => 20000,
@@ -307,7 +307,7 @@ class TransparencyController extends Controller
         $totalSpecies = count($speciesList);
 
         $this->view('public/map', [
-            'pageTitle'      => 'Peta Sebaran Pohon Tertanam - TanamPohon.id',
+            'pageTitle'      => 'Peta Sebaran Pohon Tertanam — Plant For Fun',
             'speciesList'    => $speciesList,
             'locationList'   => $locationList,
             'trees'          => $trees,
@@ -473,7 +473,7 @@ class TransparencyController extends Controller
         $topVolunteers = $stmtVolunteers ? $stmtVolunteers->fetchAll(PDO::FETCH_ASSOC) : [];
 
         $this->view('public/leaderboard', [
-            'pageTitle'     => 'Papan Peringkat Pahlawan Hijau - TanamPohon.id',
+            'pageTitle'     => 'Papan Peringkat Pahlawan Hijau — Plant For Fun',
             'period'        => $period,
             'topDonors'     => $topDonors,
             'topVolunteers' => $topVolunteers,

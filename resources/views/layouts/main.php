@@ -144,7 +144,7 @@
             <div class="px-4 py-2 d-flex align-items-center gap-2 border-top" style="border-color:rgba(255,255,255,.08)!important;background:rgba(0,0,0,.2);">
                 <i class="bi bi-leaf-fill" style="color:#bfd254;font-size:.85rem;"></i>
                 <span style="color:rgba(255,255,255,.4);font-size:.72rem;font-family:'Space Mono',monospace;">
-                    TanamPohon.id · Plant For Fun · Kerenceng Expedition
+                    Plant For Fun · Kerenceng Coffee Expedition
                 </span>
             </div>
 

@@ -14,9 +14,9 @@
             </div>
 
             <div class="card border-0 shadow-sm p-4 p-md-5 mb-5 rounded-4">
-                <h4 class="fw-bold font-poster text-uppercase mb-3" style="color: #12382c;">Tentang Gerakan TanamPohon.id</h4>
+                <h4 class="fw-bold font-poster text-uppercase mb-3" style="color: #12382c;">Tentang Plant For Fun</h4>
                 <p class="text-secondary lh-lg">
-                    TanamPohon.id adalah platform berbasis kepedulian lingkungan yang mempertemukan para donatur, relawan penanam, dan pemerhati alam. Terinspirasi dari inisiatif lapangan <strong>"Plant For Fun: Kerenceng Coffee Planting"</strong>, kami meyakini bahwa menanam pohon bukan sekadar seremoni, melainkan gerakan kebersamaan yang menyenangkan, berdampak langsung pada kelestarian mata air, dan memperkuat kesejahteraan masyarakat lokal.
+                    Plant For Fun adalah platform berbasis kepedulian lingkungan yang mempertemukan para donatur, relawan penanam, dan pemerhati alam. Terinspirasi dari inisiatif lapangan <strong>"Plant For Fun: Kerenceng Coffee Planting"</strong>, kami meyakini bahwa menanam pohon bukan sekadar seremoni, melainkan gerakan kebersamaan yang menyenangkan, berdampak langsung pada kelestarian mata air, dan memperkuat kesejahteraan masyarakat lokal.
                 </p>
                 <p class="text-secondary lh-lg">
                     Seluruh dana donasi yang terhimpun disalurkan secara transparan untuk pengadaan bibit pohon asli nusantara berkualitas (Kopi Arabika, Mangga, Trembesi, Mangrove, Mahoni, Jati), pemeliharaan dan pemantauan jangka panjang 3 tahun bersama kelompok tani hutan lokal, serta operasional aksi relawan lapangan.

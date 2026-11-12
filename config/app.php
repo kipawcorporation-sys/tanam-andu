@@ -8,7 +8,7 @@
 
 return [
     // Nama aplikasi
-    'name' => env('APP_NAME', 'TanamPohon.id'),
+    'name' => env('APP_NAME', 'Plant For Fun'),
 
     // Tagline aplikasi
     'tagline' => env('APP_TAGLINE', 'Donasi Pohon untuk Bumi yang Lebih Hijau'),
@@ -88,8 +88,8 @@ return [
         'username'   => env('MAIL_USERNAME', ''),
         'password'   => env('MAIL_PASSWORD', ''),
         'encryption' => env('MAIL_ENCRYPTION', 'tls'),
-        'from_name'  => env('MAIL_FROM_NAME', 'TanamPohon.id'),
-        'from_email' => env('MAIL_FROM_ADDRESS', 'noreply@tanampohon.id'),
+        'from_name'  => env('MAIL_FROM_NAME', 'Plant For Fun'),
+        'from_email' => env('MAIL_FROM_ADDRESS', 'noreply@plantforfun.id'),
     ],
 
     // Konfigurasi WhatsApp Gateway
@@ -107,9 +107,9 @@ return [
 
     // Meta default untuk SEO
     'meta' => [
-        'description' => 'TanamPohon.id - Platform donasi dan adopsi pohon untuk lingkungan Indonesia yang lebih hijau. Donasi pohon, ikut kegiatan penanaman, dan dapatkan sertifikat.',
+        'description' => 'Plant For Fun - Platform penanaman pohon dan agroforestri Kerenceng Coffee Planting & Expedition',
         'keywords'    => 'donasi pohon, tanam pohon, adopsi pohon, lingkungan, reboisasi, go green, Indonesia hijau',
-        'author'      => 'TanamPohon.id',
+        'author'      => 'Plant For Fun',
         'og_image'    => '/assets/images/og-image.jpg',
     ],
 ];

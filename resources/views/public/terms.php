@@ -7,7 +7,7 @@
 
                 <h5 class="fw-bold text-success">1. Ketentuan Umum</h5>
                 <p class="text-secondary small lh-lg">
-                    Dengan mengakses dan menggunakan platform TanamPohon.id, Anda menyetujui untuk terikat oleh seluruh Syarat dan Ketentuan ini. Jika Anda tidak menyetujui sebagian atau seluruh ketentuan ini, Anda disarankan untuk tidak menggunakan platform kami.
+                    Dengan mengakses dan menggunakan platform Plant For Fun, Anda menyetujui untuk terikat oleh seluruh Syarat dan Ketentuan ini. Jika Anda tidak menyetujui sebagian atau seluruh ketentuan ini, Anda disarankan untuk tidak menggunakan platform kami.
                 </p>
 
                 <h5 class="fw-bold text-success mt-4">2. Donasi & Pembayaran Manual</h5>

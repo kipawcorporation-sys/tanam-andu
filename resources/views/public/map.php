@@ -193,7 +193,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Tambahkan layer Tile OpenStreetMap
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,
-        attribution: "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors | TanamPohon.id"
+        attribution: "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors | Plant For Fun"
     }).addTo(map);
 
     markersLayer.addTo(map);

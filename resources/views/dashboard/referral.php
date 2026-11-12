@@ -56,7 +56,7 @@
                     <a href="https://twitter.com/intent/tweet?text=<?= urlencode($shareText) ?>" target="_blank" class="btn btn-light btn-sm rounded-pill text-dark fw-bold px-3 shadow-sm">
                         <i class="bi bi-twitter-x me-1"></i> Twitter / X
                     </a>
-                    <a href="https://t.me/share/url?url=<?= urlencode($referralUrl) ?>&text=<?= urlencode('Yuk tanam pohon bersama di TanamPohon.id!') ?>" target="_blank" class="btn btn-light btn-sm rounded-pill text-primary fw-bold px-3 shadow-sm">
+                    <a href="https://t.me/share/url?url=<?= urlencode($referralUrl) ?>&text=<?= urlencode('Yuk tanam pohon bersama di Plant For Fun!') ?>" target="_blank" class="btn btn-light btn-sm rounded-pill text-primary fw-bold px-3 shadow-sm">
                         <i class="bi bi-telegram me-1"></i> Telegram
                     </a>
                     <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode($referralUrl) ?>" target="_blank" class="btn btn-light btn-sm rounded-pill text-primary fw-bold px-3 shadow-sm">
@@ -127,7 +127,7 @@
                         2
                     </div>
                     <h6 class="fw-bold text-dark">Teman Mendaftar</h6>
-                    <p class="text-muted small mb-0">Teman Anda mendaftar akun di TanamPohon.id dengan kode referral Anda terisi secara otomatis.</p>
+                    <p class="text-muted small mb-0">Teman Anda mendaftar akun di Plant For Fun dengan kode referral Anda terisi secara otomatis.</p>
                 </div>
             </div>
             <div class="col-md-4">

@@ -122,7 +122,7 @@ $isClosed = ($ticket['status'] === 'closed');
                         <div class="d-flex justify-content-between align-items-center mb-2 gap-3">
                             <span class="fw-semibold small <?= $isAdmin ? 'text-white-50' : 'text-success' ?>">
                                 <?= $isAdmin
-                                    ? '<i class="bi bi-shield-check me-1"></i>Admin TanamPohon'
+                                    ? '<i class="bi bi-shield-check me-1"></i>Admin Plant For Fun'
                                     : htmlspecialchars($reply['replier_name'] ?? 'Anda') ?>
                             </span>
                             <span class="<?= $isAdmin ? 'text-white-50' : 'text-muted' ?>" style="font-size:.75rem;white-space:nowrap;">

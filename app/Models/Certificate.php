@@ -63,7 +63,7 @@ class Certificate extends Model
             'total_co2_kg'       => $totalCo2,
             'donation_amount'    => $donation['total_amount'],
             'donation_date'      => $donation['created_at'],
-            'signer_name'        => config('app.certificate_signer_name', 'Direktur Plant For Fun'),
+            'signer_name'        => config('app.certificate_signer_name', 'Koordinator Ekspedisi Kerenceng'),
             'signer_title'       => 'Plant For Fun • Kerenceng Expedition',
             'verify_url'         => url('/verifikasi-sertifikat/' . $certNumber),
         ];
@@ -144,7 +144,7 @@ class Certificate extends Model
             'event_date'         => $part['event_date'],
             'location'           => ($part['location_name'] ?? '') . ', ' . ($part['location_city'] ?? ''),
             'role'               => 'Relawan Penanaman Pohon',
-            'signer_name'        => config('app.certificate_signer_name', 'Direktur Plant For Fun'),
+            'signer_name'        => config('app.certificate_signer_name', 'Koordinator Ekspedisi Kerenceng'),
             'signer_title'       => 'Koordinator Ekspedisi Kerenceng • Plant For Fun',
             'verify_url'         => url('/verifikasi-sertifikat/' . $certNumber),
         ];

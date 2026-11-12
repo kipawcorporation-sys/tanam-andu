@@ -148,7 +148,7 @@
             <div>
                 <h6 class="fw-bold text-dark mb-1">Preferensi Saluran Pemberitahuan</h6>
                 <p class="text-muted small mb-0">
-                    Sistem TanamPohon.id otomatis mengirimkan pengingat batas transfer (3 jam sebelum kedaluwarsa) dan pengingat kegiatan relawan (H-3 dan H-1) via email & WhatsApp. Anda dapat mengatur preferensi kontak di <a href="<?= url('/dashboard/profil') ?>" class="text-success fw-bold text-decoration-none">Pengaturan Profil</a>.
+                    Sistem Plant For Fun otomatis mengirimkan pengingat batas transfer (3 jam sebelum kedaluwarsa) dan pengingat kegiatan relawan (H-3 dan H-1) via email & WhatsApp. Anda dapat mengatur preferensi kontak di <a href="<?= url('/dashboard/profil') ?>" class="text-success fw-bold text-decoration-none">Pengaturan Profil</a>.
                 </p>
             </div>
         </div>
