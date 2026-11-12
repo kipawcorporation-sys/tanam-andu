@@ -118,15 +118,46 @@ class HomeController extends Controller
             $latestNews = $stmtNews->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Exception $e) {}
 
+        // 8. Ambil produk promo untuk popup modal halaman utama
+        $promoPopupProduct = null;
+        try {
+            $stmtPromo = $db->prepare("
+                SELECT p.*, MIN(pv.price) as min_price,
+                       (SELECT image_path FROM product_images WHERE product_id = p.id AND is_primary = 1 LIMIT 1) as primary_image
+                FROM products p
+                LEFT JOIN product_variants pv ON p.id = pv.product_id AND pv.is_active = 1
+                WHERE p.category IN ('kaos', 'bundle') AND p.is_active = 1
+                GROUP BY p.id
+                ORDER BY p.sort_order ASC
+                LIMIT 1
+            ");
+            $stmtPromo->execute();
+            $promoPopupProduct = $stmtPromo->fetch(PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {}
+
+        // Fallback statis jika DB kosong
+        if (empty($promoPopupProduct)) {
+            $promoPopupProduct = [
+                'name'          => 'Kaos Organik TanamPohon - Edisi Penjaga Bumi',
+                'slug'          => 'kaos-organik-penjaga-bumi',
+                'category'      => 'kaos',
+                'min_price'     => 125000,
+                'primary_image' => 'assets/images/kaos-plant-for-fun.jpg',
+                'description'   => '100% Organic Cotton Combed 30s — Water-Based Ink',
+            ];
+        }
+
         $this->view('public/home', [
-            'pageTitle'      => 'Plant For Fun - Kerenceng Coffee Planting & Agroforestry Expedition',
-            'impactStats'    => $impactStats,
-            'treeSpecies'    => $treeSpecies,
-            'upcomingEvents' => $upcomingEvents,
-            'featuredCoffee' => $featuredCoffee,
-            'featuredMerch'  => $featuredMerch,
-            'faqs'           => $faqs,
-            'latestNews'     => $latestNews,
+            'pageTitle'          => 'Plant For Fun - Kerenceng Coffee Planting & Agroforestry Expedition',
+            'impactStats'        => $impactStats,
+            'treeSpecies'        => $treeSpecies,
+            'upcomingEvents'     => $upcomingEvents,
+            'featuredCoffee'     => $featuredCoffee,
+            'featuredMerch'      => $featuredMerch,
+            'faqs'               => $faqs,
+            'latestNews'         => $latestNews,
+            'showPromoModal'     => true,
+            'promoPopupProduct'  => $promoPopupProduct,
         ]);
     }
 
