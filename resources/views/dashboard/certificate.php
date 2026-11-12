@@ -358,19 +358,92 @@
             opacity: 0.85;
         }
 
+        /* =========================================================
+           PRINT / SAVE AS PDF — Sertifikat A4 Landscape
+           Kertas A4 landscape = 297mm × 210mm
+           ========================================================= */
+        @page {
+            size: A4 landscape;
+            margin: 0;
+        }
+
         @media print {
-            body {
-                background: none;
-                padding: 0;
+            /* Reset body jadi putih bersih tanpa padding */
+            html, body {
+                background: #fff !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 297mm !important;
+                height: 210mm !important;
+                overflow: hidden !important;
             }
+
+            /* Sembunyikan toolbar */
             .action-toolbar {
-                display: none;
+                display: none !important;
             }
+
+            /* Canvas sertifikat: pas A4 landscape penuh */
             .cert-container {
-                box-shadow: none;
-                margin: 0 auto;
-                page-break-inside: avoid;
+                /* Dimensi persis A4 landscape dengan margin 8mm tiap sisi */
+                width: 281mm !important;
+                height: 194mm !important;
+                margin: 8mm auto !important;
+                padding: 14mm 16mm 10mm !important;
+
+                box-shadow: none !important;
+                border-radius: 6px !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+
+                /* Pastikan tidak ada overflow */
+                overflow: hidden !important;
             }
+
+            /* Sesuaikan border ornament ke ukuran mm */
+            .cert-border-outer {
+                top: 5mm; left: 5mm; right: 5mm; bottom: 5mm;
+                border-width: 2.5pt !important;
+            }
+            .cert-border-inner {
+                top: 7mm; left: 7mm; right: 7mm; bottom: 7mm;
+            }
+            .corner-knot {
+                width: 4mm !important;
+                height: 4mm !important;
+            }
+            .ck-tl { top: 6.3mm !important; left: 6.3mm !important; }
+            .ck-tr { top: 6.3mm !important; right: 6.3mm !important; }
+            .ck-bl { bottom: 6.3mm !important; left: 6.3mm !important; }
+            .ck-br { bottom: 6.3mm !important; right: 6.3mm !important; }
+
+            /* Watermark tetap proporsional */
+            .cert-watermark {
+                width: 140mm !important;
+            }
+
+            /* Skala font sedikit lebih kecil agar muat di kertas */
+            .cert-title      { font-size: 20pt !important; letter-spacing: 3px !important; }
+            .cert-subtitle   { font-size: 8pt !important; }
+            .cert-recipient  { font-size: 28pt !important; }
+            .cert-text       { font-size: 9.5pt !important; line-height: 1.6 !important; }
+            .cert-presented-to { font-size: 8pt !important; }
+
+            /* Logo & partner strip */
+            .cert-logos-bar  { padding-bottom: 6px !important; margin-bottom: 8px !important; }
+            .partner-logo-item img { height: 20px !important; }
+
+            /* Footer elemen */
+            .cert-qr img     { width: 56px !important; height: 56px !important; }
+            .seal-circle     { width: 60px !important; height: 60px !important; }
+            .sig-handwritten { font-size: 15pt !important; }
+            .sig-line        { width: 48mm !important; }
+            .media-partners-strip img { height: 12px !important; }
+            .cert-meta       { font-size: 7pt !important; }
+
+            /* Pastikan gambar tidak di-block oleh browser saat print */
+            img { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
     </style>
 </head>
@@ -490,6 +563,37 @@
             </div>
         </div>
     </div>
+
+<script>
+/**
+ * Fungsi cetak sertifikat — tunggu semua gambar/font terpanggil dulu
+ * sebelum trigger window.print() agar hasil PDF rapi.
+ */
+function printCertificate() {
+    // Pastikan semua gambar sudah load
+    const images = document.querySelectorAll('img');
+    const promises = Array.from(images).map(img => {
+        if (img.complete) return Promise.resolve();
+        return new Promise(resolve => {
+            img.onload = resolve;
+            img.onerror = resolve; // lanjut meski gagal load
+        });
+    });
+
+    // Tunggu font juga
+    document.fonts.ready.then(() => {
+        Promise.all(promises).then(() => {
+            setTimeout(() => window.print(), 150);
+        });
+    });
+}
+
+// Pasang ke tombol print
+document.querySelectorAll('.btn-print, [onclick="window.print()"]').forEach(btn => {
+    btn.removeAttribute('onclick');
+    btn.addEventListener('click', printCertificate);
+});
+</script>
 
 </body>
 </html>

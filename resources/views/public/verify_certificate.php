@@ -337,35 +337,119 @@ $isFound = !empty($certificate);
     opacity: 0.85;
 }
 
-/* Print Rules */
+/* =========================================================
+   PRINT / SAVE AS PDF — Sertifikat A4 Landscape
+   ========================================================= */
+@page {
+    size: A4 landscape;
+    margin: 0;
+}
+
 @media print {
-    body {
-        background: none !important;
+    /* Reset body */
+    html, body {
+        background: #fff !important;
         padding: 0 !important;
+        margin: 0 !important;
+        width: 297mm !important;
+        height: 210mm !important;
+        overflow: hidden !important;
     }
+
+    /* Sembunyikan semua kecuali kanvas sertifikat */
     .verify-hero,
     .navbar,
     .footer,
     .alert,
     .cert-actions-bar,
     .cert-metadata-card,
-    .cert-scroll-hint {
+    .cert-scroll-hint,
+    section.py-5 > .container > .row:not(:first-child),
+    .cert-canvas-outer ~ * {
         display: none !important;
     }
+
+    /* Wrapper section jadi transparan */
+    section.py-5 {
+        background: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    section.py-5 > .container {
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: none !important;
+    }
+
+    /* Canvas outer: hilangkan background gelap */
     .cert-canvas-outer {
         background: none !important;
         box-shadow: none !important;
         padding: 0 !important;
         overflow: visible !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
     }
     .cert-canvas-scroll {
         min-width: auto !important;
+        justify-content: center !important;
     }
+
+    /* Canvas sertifikat: pas A4 landscape */
     .cert-container {
+        width: 281mm !important;
+        height: 194mm !important;
+        margin: 8mm auto !important;
+        padding: 14mm 16mm 10mm !important;
         box-shadow: none !important;
-        margin: 0 auto !important;
+        border-radius: 6px !important;
         page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        overflow: hidden !important;
     }
+
+    /* Border ornament */
+    .cert-border-outer {
+        top: 5mm; left: 5mm; right: 5mm; bottom: 5mm;
+        border-width: 2.5pt !important;
+    }
+    .cert-border-inner {
+        top: 7mm; left: 7mm; right: 7mm; bottom: 7mm;
+    }
+    .corner-knot {
+        width: 4mm !important;
+        height: 4mm !important;
+    }
+    .ck-tl { top: 6.3mm !important; left: 6.3mm !important; }
+    .ck-tr { top: 6.3mm !important; right: 6.3mm !important; }
+    .ck-bl { bottom: 6.3mm !important; left: 6.3mm !important; }
+    .ck-br { bottom: 6.3mm !important; right: 6.3mm !important; }
+
+    /* Watermark */
+    .cert-watermark { width: 140mm !important; }
+
+    /* Typography */
+    .cert-title      { font-size: 20pt !important; letter-spacing: 3px !important; }
+    .cert-subtitle   { font-size: 8pt !important; }
+    .cert-recipient  { font-size: 28pt !important; }
+    .cert-text       { font-size: 9.5pt !important; line-height: 1.6 !important; }
+    .cert-presented-to { font-size: 8pt !important; }
+
+    /* Logos */
+    .cert-logos-bar  { padding-bottom: 6px !important; margin-bottom: 8px !important; }
+    .partner-logo-item img { height: 20px !important; }
+
+    /* Footer */
+    .cert-qr img     { width: 56px !important; height: 56px !important; }
+    .seal-circle     { width: 60px !important; height: 60px !important; }
+    .sig-handwritten { font-size: 15pt !important; }
+    .sig-line        { width: 48mm !important; }
+    .media-partners-strip img { height: 12px !important; }
+    .cert-meta       { font-size: 7pt !important; }
+
+    /* Paksa browser tampilkan warna & gambar saat print */
+    img { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
 </style>
 
@@ -689,4 +773,31 @@ function handleVerifySubmit(e) {
     }
     return false;
 }
+
+/**
+ * Cetak sertifikat — tunggu gambar & font sebelum print
+ */
+function printCertificate() {
+    const images = document.querySelectorAll('.cert-container img');
+    const promises = Array.from(images).map(img => {
+        if (img.complete) return Promise.resolve();
+        return new Promise(resolve => {
+            img.onload = resolve;
+            img.onerror = resolve;
+        });
+    });
+    document.fonts.ready.then(() => {
+        Promise.all(promises).then(() => {
+            setTimeout(() => window.print(), 150);
+        });
+    });
+}
+
+// Override tombol cetak
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('[onclick="window.print()"]').forEach(btn => {
+        btn.removeAttribute('onclick');
+        btn.addEventListener('click', printCertificate);
+    });
+});
 </script>
