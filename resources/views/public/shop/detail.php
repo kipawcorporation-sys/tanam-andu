@@ -21,49 +21,76 @@ $isCoffee = ($product['category'] === 'kopi');
             <div class="card border-0 shadow-sm rounded-4 mb-3 position-relative overflow-hidden" 
                  style="background: #ffffff; min-height: 420px; border: 1.5px solid rgba(18,56,44,0.12) !important;">
                 
-                <?php if ($isCoffee): ?>
-                    <?php
-                        $primaryImg = !empty($product['images']) ? $product['images'][0]['image_path'] : null;
-                        if (!$primaryImg) {
-                            $slugImgs = [
-                                'arabica-kerenceng-honey-an-du' => 'assets/images/coffee-honey.jpg',
-                                'kerenceng-natural-anaerobic-an-du' => 'assets/images/coffee-anaerobic.jpg',
-                                'drip-bag-kerenceng-an-du-trail' => 'assets/images/coffee-drip-bag.jpg',
-                                'cold-brew-concentrate-an-du' => 'assets/images/coffee-cold-brew.jpg',
-                            ];
-                            $primaryImg = $slugImgs[$product['slug']] ?? 'assets/images/coffee-honey.jpg';
+                <?php
+                    $primaryImg = !empty($product['images']) ? $product['images'][0]['image_path'] : null;
+                    if (!$primaryImg) {
+                        $slugImgs = [
+                            'arabica-kerenceng-honey-an-du' => 'assets/images/coffee-honey.jpg',
+                            'kerenceng-natural-anaerobic-an-du' => 'assets/images/coffee-anaerobic.jpg',
+                            'drip-bag-kerenceng-an-du-trail' => 'assets/images/coffee-drip-bag.jpg',
+                            'cold-brew-concentrate-an-du' => 'assets/images/coffee-cold-brew.jpg',
+                            'kaos-organik-penjaga-bumi' => 'assets/images/kaos-plant-for-fun.jpg',
+                            'bundle-kaos-donasi-2-pohon' => 'assets/images/kaos-plant-for-fun.jpg',
+                        ];
+                        $primaryImg = $slugImgs[$product['slug']] ?? null;
+                    }
+                    if (!$primaryImg) {
+                        if ($isCoffee) {
+                            $primaryImg = 'assets/images/coffee-honey.jpg';
+                        } elseif ($product['category'] === 'kaos' || $product['category'] === 'bundle' || $product['category'] === 'merchandise') {
+                            $primaryImg = 'assets/images/kaos-plant-for-fun.jpg';
                         }
-                    ?>
-                    <div class="position-relative w-100" style="height: 420px;">
-                        <img src="<?= asset($primaryImg) ?>" alt="<?= e($product['name']) ?>" class="w-100 h-100" style="object-fit: cover;">
-                        
-                        <!-- andu Co-branding Banner Overlay -->
-                        <div class="position-absolute top-0 start-0 m-3 p-2 px-3 rounded-3 bg-white shadow-sm border d-flex align-items-center gap-2">
-                            <img src="<?= asset('assets/images/logo-andu.png') ?>" alt="andu" style="height: 20px; width: auto;">
-                            <span class="fw-bold font-mono text-dark" style="font-size: 11px;">ROASTED BY andu</span>
-                        </div>
+                    }
+                ?>
 
-                        <div class="position-absolute bottom-0 start-0 m-3 d-flex gap-2 flex-wrap">
-                            <span class="badge-altitude shadow">Elevasi: 1.550 mdpl</span>
-                            <span class="badge bg-success font-mono rounded-pill px-3 py-1 text-white shadow">Arabica Specialty</span>
-                        </div>
+                <?php if ($primaryImg): ?>
+                    <div class="position-relative w-100" style="height: 440px; background: #f8faf8;">
+                        <img src="<?= asset($primaryImg) ?>" id="mainProductImg" alt="<?= e($product['name']) ?>" class="w-100 h-100" style="object-fit: cover;">
+                        
+                        <?php if ($isCoffee): ?>
+                            <!-- andu Co-branding Banner Overlay -->
+                            <div class="position-absolute top-0 start-0 m-3 p-2 px-3 rounded-3 bg-white shadow-sm border d-flex align-items-center gap-2">
+                                <img src="<?= asset('assets/images/logo-andu.png') ?>" alt="andu" style="height: 20px; width: auto;">
+                                <span class="fw-bold font-mono text-dark" style="font-size: 11px;">ROASTED BY andu</span>
+                            </div>
+
+                            <div class="position-absolute bottom-0 start-0 m-3 d-flex gap-2 flex-wrap">
+                                <span class="badge-altitude shadow">Elevasi: 1.550 mdpl</span>
+                                <span class="badge bg-success font-mono rounded-pill px-3 py-1 text-white shadow">Arabica Specialty</span>
+                            </div>
+                        <?php else: ?>
+                            <div class="position-absolute top-0 start-0 m-3 d-flex gap-2 flex-wrap">
+                                <span class="badge bg-dark bg-opacity-75 font-mono rounded-pill px-3 py-2 text-white shadow-sm">
+                                    Official Merchandise
+                                </span>
+                                <?php if ($product['category'] === 'bundle'): ?>
+                                    <span class="badge bg-warning text-dark font-poster rounded-pill px-3 py-2 shadow-sm">
+                                        ⭐ Bundle Hemat
+                                    </span>
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 <?php else: ?>
                     <div class="display-1 text-success text-center py-5" id="mainProductVisual">👕</div>
                 <?php endif; ?>
             </div>
             
-            <div class="d-flex gap-2 justify-content-center">
-                <?php if ($isCoffee): ?>
+            <div class="d-flex gap-2 justify-content-center flex-wrap">
+                <?php if (!empty($product['images']) && count($product['images']) > 1): ?>
+                    <?php foreach ($product['images'] as $idx => $img): ?>
+                        <img src="<?= asset($img['image_path']) ?>" 
+                             alt="Thumbnail <?= $idx + 1 ?>" 
+                             class="rounded-3 border <?= $idx === 0 ? 'border-2 border-success' : 'border' ?> shadow-sm product-thumb" 
+                             style="width: 60px; height: 60px; object-fit: cover; cursor: pointer;"
+                             onclick="switchMainProductImg(this.src, this)">
+                    <?php endforeach; ?>
+                <?php elseif ($isCoffee): ?>
                     <div class="d-flex align-items-center gap-2">
-                        <img src="<?= asset('assets/images/coffee-honey.jpg') ?>" alt="Beans" class="rounded-3 border border-2 border-success shadow-sm" style="width: 60px; height: 60px; object-fit: cover; cursor: pointer;">
-                        <img src="<?= asset('assets/images/coffee-anaerobic.jpg') ?>" alt="Cherries" class="rounded-3 border shadow-sm" style="width: 60px; height: 60px; object-fit: cover; cursor: pointer;">
-                        <img src="<?= asset('assets/images/coffee-plantation.jpg') ?>" alt="Kebon Kopi Kerenceng" class="rounded-3 border shadow-sm" style="width: 60px; height: 60px; object-fit: cover; cursor: pointer;">
+                        <img src="<?= asset('assets/images/coffee-honey.jpg') ?>" alt="Beans" class="rounded-3 border border-2 border-success shadow-sm product-thumb" style="width: 60px; height: 60px; object-fit: cover; cursor: pointer;" onclick="switchMainProductImg(this.src, this)">
+                        <img src="<?= asset('assets/images/coffee-anaerobic.jpg') ?>" alt="Cherries" class="rounded-3 border shadow-sm product-thumb" style="width: 60px; height: 60px; object-fit: cover; cursor: pointer;" onclick="switchMainProductImg(this.src, this)">
+                        <img src="<?= asset('assets/images/coffee-plantation.jpg') ?>" alt="Kebon Kopi Kerenceng" class="rounded-3 border shadow-sm product-thumb" style="width: 60px; height: 60px; object-fit: cover; cursor: pointer;" onclick="switchMainProductImg(this.src, this)">
                     </div>
-                <?php else: ?>
-                    <button type="button" class="btn btn-sm btn-outline-success active px-3 rounded-pill font-mono">Depan</button>
-                    <button type="button" class="btn btn-sm btn-outline-success px-3 rounded-pill font-mono">Belakang</button>
-                    <button type="button" class="btn btn-sm btn-outline-success px-3 rounded-pill font-mono">Bahan Katun</button>
                 <?php endif; ?>
             </div>
         </div>
@@ -149,7 +176,7 @@ $isCoffee = ($product['category'] === 'kopi');
             <!-- Benefit Card -->
             <div class="card border-0 rounded-4 p-3 mt-4" style="background: #e6eee7; border: 1px solid #d6e4d7 !important;">
                 <div class="d-flex align-items-center gap-3">
-                    <span class="fs-2">☕</span>
+                    <span class="fs-2"><?= $isCoffee ? '☕' : '🌱' ?></span>
                     <div class="small" style="color: #12382c;">
                         <strong>Dampak Konservasi Nyata:</strong> <?= $isCoffee 
                             ? 'Setiap pembelian kopi ini mendukung langsung petani kopi agroforestri lereng Gunung Kerenceng untuk tetap menjaga kelestarian pohon penaung di hutan lindung.' 
@@ -234,5 +261,20 @@ function adjustQty(delta) {
     if (val < min) val = min;
     if (val > max) val = max;
     input.value = val;
+}
+
+function switchMainProductImg(src, el) {
+    const mainImg = document.getElementById('mainProductImg');
+    if (mainImg) {
+        mainImg.src = src;
+    }
+    document.querySelectorAll('.product-thumb').forEach(t => {
+        t.classList.remove('border-2', 'border-success');
+        t.classList.add('border');
+    });
+    if (el) {
+        el.classList.add('border-2', 'border-success');
+        el.classList.remove('border');
+    }
 }
 </script>

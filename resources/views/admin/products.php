@@ -256,7 +256,13 @@ $totStok = $productStats['total_stock'] ?? 0;
                         </tr>
                     <?php endif; ?>
                     <?php foreach ($products as $p): 
-                        $thumb = !empty($p['primary_image']) ? '/' . ltrim($p['primary_image'], '/') : '/assets/images/coffee-honey.jpg';
+                        if (!empty($p['primary_image'])) {
+                            $thumb = asset($p['primary_image']);
+                        } elseif ($p['category'] === 'kaos' || $p['category'] === 'bundle' || $p['category'] === 'merchandise') {
+                            $thumb = asset('assets/images/kaos-plant-for-fun.jpg');
+                        } else {
+                            $thumb = asset('assets/images/coffee-honey.jpg');
+                        }
                     ?>
                         <tr class="prod-row <?= !$p['is_active'] ? 'opacity-50 bg-light' : '' ?>"
                             data-name="<?= strtolower(htmlspecialchars($p['name'])) ?>"

@@ -28,7 +28,13 @@ class DonationController extends Controller
      */
     public function index(): void
     {
-        $species = $this->speciesModel->getActiveSpecies();
+        try {
+            $species = $this->speciesModel->getActiveSpecies();
+        } catch (\Throwable $e) {
+            error_log('[DonationController] getActiveSpecies gagal: ' . $e->getMessage());
+            $species = [];
+        }
+
         $selectedSpeciesId = (int)$this->request->input('spesies', 0);
 
         // Jika tidak ada parameter spesifik, pilih yang pertama secara default

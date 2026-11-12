@@ -623,7 +623,9 @@ INSERT INTO `product_images` (`id`, `product_id`, `image_path`, `sort_order`, `i
 ('1', '4', 'assets/images/coffee-honey.jpg', '1', '1', '2026-11-07 13:00:34'),
 ('2', '5', 'assets/images/coffee-anaerobic.jpg', '1', '1', '2026-11-07 13:00:34'),
 ('3', '6', 'assets/images/coffee-drip-bag.jpg', '1', '1', '2026-11-07 13:00:34'),
-('4', '7', 'assets/images/coffee-cold-brew.jpg', '1', '1', '2026-11-07 13:00:34');
+('4', '7', 'assets/images/coffee-cold-brew.jpg', '1', '1', '2026-11-07 13:00:34'),
+('5', '1', 'assets/images/kaos-plant-for-fun.jpg', '1', '1', '2026-11-08 00:00:00'),
+('6', '3', 'assets/images/kaos-plant-for-fun.jpg', '1', '1', '2026-11-08 00:00:00');
 
 DROP TABLE IF EXISTS `product_variants`;
 CREATE TABLE `product_variants` (

@@ -11,6 +11,47 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+// Global exception handler — log ke file dan tampilkan halaman error ramah pengguna
+set_exception_handler(function (Throwable $e) {
+    $logDir  = dirname(__DIR__) . '/storage/logs';
+    if (!is_dir($logDir)) {
+        @mkdir($logDir, 0775, true);
+    }
+    $logFile = $logDir . '/app.log';
+    $ts      = date('Y-m-d H:i:s');
+    $uri     = $_SERVER['REQUEST_URI'] ?? '-';
+    $msg     = "[{$ts}] EXCEPTION on {$uri}: " . $e->getMessage()
+             . " in " . $e->getFile() . ":" . $e->getLine()
+             . PHP_EOL . $e->getTraceAsString() . PHP_EOL;
+    @file_put_contents($logFile, $msg, FILE_APPEND | LOCK_EX);
+
+    http_response_code(500);
+    if (!headers_sent()) {
+        header('Content-Type: text/html; charset=UTF-8');
+    }
+    // Tampilkan detail hanya di mode debug
+    $debug = ($_ENV['APP_DEBUG'] ?? getenv('APP_DEBUG') ?? 'false') === 'true';
+    if ($debug) {
+        echo '<pre style="font-family:monospace;background:#1a1a1a;color:#f88;padding:2em;">';
+        echo htmlspecialchars($e->getMessage()) . "\n\n";
+        echo htmlspecialchars($e->getTraceAsString());
+        echo '</pre>';
+    } else {
+        echo '<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8">'
+           . '<title>Terjadi Kesalahan</title>'
+           . '<meta name="viewport" content="width=device-width,initial-scale=1">'
+           . '<style>body{font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f4f7f4}'
+           . '.box{text-align:center;padding:2em;max-width:500px}'
+           . 'h1{color:#12382c;font-size:3rem;margin-bottom:.5rem}p{color:#666}'
+           . 'a{color:#12382c;font-weight:bold}</style></head>'
+           . '<body><div class="box"><h1>😕 500</h1>'
+           . '<p>Terjadi kesalahan pada sistem. Tim kami sudah diberitahu.</p>'
+           . '<p><a href="/">← Kembali ke Beranda</a></p>'
+           . '</div></body></html>';
+    }
+    exit;
+});
+
 // Definisikan path dasar aplikasi
 define('BASE_PATH', dirname(__DIR__));
 define('APP_PATH', BASE_PATH . '/app');

@@ -58,37 +58,62 @@
     <?php if (!empty($products)): ?>
         <div class="row g-4">
             <?php foreach ($products as $prod): ?>
-                <?php $isCoffee = ($prod['category'] === 'kopi'); ?>
+                <?php 
+                    $isCoffee = ($prod['category'] === 'kopi');
+                    $primaryImg = !empty($prod['images']) ? $prod['images'][0]['image_path'] : null;
+                    if (!$primaryImg) {
+                        $slugImgs = [
+                            'arabica-kerenceng-honey-an-du' => 'assets/images/coffee-honey.jpg',
+                            'kerenceng-natural-anaerobic-an-du' => 'assets/images/coffee-anaerobic.jpg',
+                            'drip-bag-kerenceng-an-du-trail' => 'assets/images/coffee-drip-bag.jpg',
+                            'cold-brew-concentrate-an-du' => 'assets/images/coffee-cold-brew.jpg',
+                            'kaos-organik-penjaga-bumi' => 'assets/images/kaos-plant-for-fun.jpg',
+                            'bundle-kaos-donasi-2-pohon' => 'assets/images/kaos-plant-for-fun.jpg',
+                        ];
+                        $primaryImg = $slugImgs[$prod['slug']] ?? null;
+                    }
+                    if (!$primaryImg) {
+                        if ($isCoffee) {
+                            $primaryImg = 'assets/images/coffee-honey.jpg';
+                        } elseif ($prod['category'] === 'kaos' || $prod['category'] === 'bundle' || $prod['category'] === 'merchandise') {
+                            $primaryImg = 'assets/images/kaos-plant-for-fun.jpg';
+                        }
+                    }
+                ?>
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100 border-0 shadow-sm overflow-hidden card-hover rounded-4" style="border: 1px solid rgba(18,56,44,0.12) !important;">
                         
                         <!-- Header Visual Produk -->
-                        <?php if ($isCoffee): ?>
-                            <?php
-                                $primaryImg = !empty($prod['images']) ? $prod['images'][0]['image_path'] : null;
-                                if (!$primaryImg) {
-                                    $slugImgs = [
-                                        'arabica-kerenceng-honey-an-du' => 'assets/images/coffee-honey.jpg',
-                                        'kerenceng-natural-anaerobic-an-du' => 'assets/images/coffee-anaerobic.jpg',
-                                        'drip-bag-kerenceng-an-du-trail' => 'assets/images/coffee-drip-bag.jpg',
-                                        'cold-brew-concentrate-an-du' => 'assets/images/coffee-cold-brew.jpg',
-                                    ];
-                                    $primaryImg = $slugImgs[$prod['slug']] ?? 'assets/images/coffee-honey.jpg';
-                                }
-                            ?>
-                            <div class="position-relative w-100" style="height: 230px; overflow: hidden;">
+                        <?php if ($primaryImg): ?>
+                            <div class="position-relative w-100" style="height: 230px; overflow: hidden; background: #f8faf8;">
                                 <img src="<?= asset($primaryImg) ?>" alt="<?= e($prod['name']) ?>" class="w-100 h-100" style="object-fit: cover;">
-                                <div class="position-absolute top-0 start-0 m-2">
-                                    <span class="badge-andu shadow-sm">
-                                        <img src="<?= asset('assets/images/logo-andu-white.png') ?>" alt="andu" style="height: 12px; width: auto;">
-                                        ROASTED BY andu
-                                    </span>
-                                </div>
-                                <div class="position-absolute bottom-0 end-0 m-2">
-                                    <span class="badge bg-dark bg-opacity-75 text-white font-mono" style="font-size: 10px;">
-                                        Kerenceng 1.550m
-                                    </span>
-                                </div>
+                                <?php if ($isCoffee): ?>
+                                    <div class="position-absolute top-0 start-0 m-2">
+                                        <span class="badge-andu shadow-sm">
+                                            <img src="<?= asset('assets/images/logo-andu-white.png') ?>" alt="andu" style="height: 12px; width: auto;">
+                                            ROASTED BY andu
+                                        </span>
+                                    </div>
+                                    <div class="position-absolute bottom-0 end-0 m-2">
+                                        <span class="badge bg-dark bg-opacity-75 text-white font-mono" style="font-size: 10px;">
+                                            Kerenceng 1.550m
+                                        </span>
+                                    </div>
+                                <?php else: ?>
+                                    <?php if ($prod['category'] === 'bundle'): ?>
+                                        <div class="position-absolute top-0 start-0 m-2">
+                                            <span class="badge bg-warning text-dark fw-bold rounded-pill px-3 py-1 font-poster shadow-sm" style="font-size: 11px;">
+                                                ⭐ Bundle Hemat
+                                            </span>
+                                        </div>
+                                    <?php else: ?>
+                                        <div class="position-absolute top-0 start-0 m-2">
+                                            <span class="badge bg-dark bg-opacity-75 text-white fw-bold rounded-pill px-3 py-1 font-mono shadow-sm" style="font-size: 11px;">
+                                                Official Merch
+                                            </span>
+                                        </div>
+                                    <?php endif; ?>
+                                <?php endif; ?>
                             </div>
                         <?php else: ?>
                             <div class="position-relative text-center py-5" style="background: #f8faf8; min-height: 230px; display: flex; align-items: center; justify-content: center;">

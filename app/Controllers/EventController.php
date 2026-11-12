@@ -37,13 +37,19 @@ class EventController extends Controller
             'difficulty' => trim($_GET['kesulitan'] ?? ''),
             'fee_type'   => trim($_GET['biaya'] ?? ''),
             'sort'       => $_GET['urut'] ?? 'date_asc',
-            'view'       => $_GET['view'] ?? 'grid', // 'grid' atau 'timeline'
+            'view'       => $_GET['view'] ?? 'grid',
         ];
 
-        $events = $this->eventModel->getFilteredEvents($filters);
-        $stats = $this->eventModel->getExpeditionStats();
-        $categories = $this->eventModel->getCategories();
-        $featuredEvent = $this->eventModel->getNextFeaturedExpedition();
+        try {
+            $events        = $this->eventModel->getFilteredEvents($filters);
+            $stats         = $this->eventModel->getExpeditionStats();
+            $categories    = $this->eventModel->getCategories();
+            $featuredEvent = $this->eventModel->getNextFeaturedExpedition();
+        } catch (\Throwable $e) {
+            error_log('[EventController] DB error: ' . $e->getMessage());
+            $events = $stats = $categories = [];
+            $featuredEvent = null;
+        }
 
         $this->view('public/events/index', [
             'pageTitle'     => 'Jadwal Ekspedisi & Aksi Relawan Penanaman Pohon - ' . config('app.name'),

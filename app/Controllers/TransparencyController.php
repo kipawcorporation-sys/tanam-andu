@@ -30,6 +30,7 @@ class TransparencyController extends Controller
      */
     public function index(): void
     {
+        try {
         // 1. Total Dana Donasi Berhasil
         $stmtDonation = $this->db->query("
             SELECT 
@@ -208,6 +209,27 @@ class TransparencyController extends Controller
             'volunteersCount'   => $volunteersCount,
             'certCount'         => $certCount,
         ]);
+        } catch (\Throwable $e) {
+            error_log('[TransparencyController] DB error: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+            // Fallback: render halaman dengan data kosong
+            $this->view('public/transparency', [
+                'pageTitle'        => 'Laporan Transparansi - TanamPohon.id',
+                'donationStats'    => ['total_transactions' => 0, 'total_raised' => 0, 'total_trees_donated' => 0],
+                'targetAmount'     => 500000000,
+                'targetTrees'      => 20000,
+                'treeStats'        => ['total_trees' => 0, 'total_planted' => 0, 'total_growing' => 0, 'total_monitored' => 0],
+                'ecoStats'         => ['total_co2_kg' => 0, 'total_o2_kg' => 0],
+                'locations'        => [],
+                'locationsJson'    => '[]',
+                'recentDonations'  => [],
+                'latestNews'       => [],
+                'treeSpecies'      => [],
+                'donationTrends'   => [],
+                'trendGranularity' => 'monthly',
+                'volunteersCount'  => 0,
+                'certCount'        => 0,
+            ]);
+        }
     }
 
     /**
@@ -263,16 +285,21 @@ class TransparencyController extends Controller
      */
     public function map(): void
     {
-        // Ambil filter spesies pohon
-        $stmtSpecies = $this->db->query("SELECT id, name FROM tree_species WHERE is_active = 1 ORDER BY name ASC");
-        $speciesList = $stmtSpecies->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            // Ambil filter spesies pohon
+            $stmtSpecies = $this->db->query("SELECT id, name FROM tree_species WHERE is_active = 1 ORDER BY name ASC");
+            $speciesList = $stmtSpecies->fetchAll(PDO::FETCH_ASSOC);
 
-        // Ambil filter lokasi penanaman
-        $stmtLocations = $this->db->query("SELECT id, name, city, province FROM planting_locations WHERE is_active = 1 ORDER BY name ASC");
-        $locationList = $stmtLocations->fetchAll(PDO::FETCH_ASSOC);
+            // Ambil filter lokasi penanaman
+            $stmtLocations = $this->db->query("SELECT id, name, city, province FROM planting_locations WHERE is_active = 1 ORDER BY name ASC");
+            $locationList = $stmtLocations->fetchAll(PDO::FETCH_ASSOC);
 
-        // Ambil seluruh titik pohon yang memiliki koordinat
-        $trees = $this->getTreePoints();
+            // Ambil seluruh titik pohon yang memiliki koordinat
+            $trees = $this->getTreePoints();
+        } catch (\Throwable $e) {
+            error_log('[TransparencyController::map] DB error: ' . $e->getMessage());
+            $speciesList = $locationList = $trees = [];
+        }
 
         // Statistik ringkas untuk widget peta
         $totalPlanted = count($trees);

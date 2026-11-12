@@ -34,13 +34,21 @@ class ShopController extends Controller
     public function index(): void
     {
         $category = $this->request->input('kategori');
-        $products = $this->productModel->getActiveProducts($category);
+
+        try {
+            $products      = $this->productModel->getActiveProducts($category);
+            $cartItemCount = $this->cart->getItemCount();
+        } catch (\Throwable $e) {
+            error_log('[ShopController] DB error: ' . $e->getMessage());
+            $products      = [];
+            $cartItemCount = 0;
+        }
 
         $this->view('public/shop/index', [
             'pageTitle'        => 'Toko Kaos Merchandise - ' . config('app.name'),
             'products'         => $products,
             'selectedCategory' => $category,
-            'cartItemCount'    => $this->cart->getItemCount(),
+            'cartItemCount'    => $cartItemCount,
         ]);
     }
 
