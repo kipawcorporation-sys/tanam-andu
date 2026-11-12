@@ -46,9 +46,9 @@ class ShippingService
 
         // 1. OPSI AMBIL LANGSUNG KE KEDAI (Gratis / Rp 0) — Satu-satunya opsi Bebas Ongkir
         $rates[] = [
-            'courier'     => 'Ambil Sendiri ke Kedai / Roastery andu',
+            'courier'     => 'Ambil Sendiri',
             'courier_code'=> 'pickup',
-            'service'     => 'Pick-up Point Kedai andu Coffee Lab & Basecamp Kerenceng',
+            'service'     => 'Kedai andu & Basecamp Kerenceng',
             'cost'        => 0,
             'original_cost'=> 0,
             'is_free'     => true,
@@ -257,9 +257,9 @@ class ShippingService
     {
         if ($serviceCode === 'pickup_event' || $serviceCode === 'pickup_kerenceng') {
             return [
-                'courier'      => 'Ambil Sendiri ke Kedai / Roastery andu',
+                'courier'      => 'Ambil Sendiri',
                 'courier_code' => 'pickup',
-                'service'      => 'Pick-up Point Kedai andu Coffee Lab & Basecamp Kerenceng',
+                'service'      => 'Kedai andu & Basecamp Kerenceng',
                 'cost'         => 0,
                 'original_cost'=> 0,
                 'is_free'      => true,

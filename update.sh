@@ -100,8 +100,17 @@ else
 fi
 
 # 6. Verifikasi Health & Status
-echo -e "\n${YELLOW}[6/7] Menunggu container aktif dan sehat...${NC}"
-sleep 3
+echo -e "\n${YELLOW}[6/7] Menunggu container aktif dan memeriksa skema database...${NC}"
+sleep 2
+
+# Migrasi otomatis kolom pengiriman jika belum diperbarui
+if $DOCKER_COMPOSE ps -q db &>/dev/null && [ -n "$($DOCKER_COMPOSE ps -q db)" ]; then
+    $DOCKER_COMPOSE exec -T db mysql -u root -proot tanampohon_db -e "
+        ALTER TABLE shipments MODIFY COLUMN service VARCHAR(150) DEFAULT NULL;
+        ALTER TABLE shipments MODIFY COLUMN courier VARCHAR(100) NOT NULL;
+        ALTER TABLE orders MODIFY COLUMN shipping_method VARCHAR(255) DEFAULT NULL;
+    " 2>/dev/null || true
+fi
 
 # Opsi re-import database jika diberikan argumen --import-db
 if [ "$1" == "--import-db" ]; then

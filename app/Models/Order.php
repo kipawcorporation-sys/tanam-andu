@@ -49,6 +49,13 @@ class Order extends Model
             // 2. Generate nomor pesanan unik
             $orderNumber = 'ORD-' . date('Ymd') . '-' . strtoupper(bin2hex(random_bytes(2)));
 
+            $courierName = trim((string)($shippingRate['courier'] ?? 'Kurir'));
+            $serviceName = trim((string)($shippingRate['service'] ?? 'Reguler'));
+            $shippingMethod = $courierName . ' - ' . $serviceName;
+            if (mb_strlen($shippingMethod) > 95) {
+                $shippingMethod = mb_substr($shippingMethod, 0, 95) . '...';
+            }
+
             // 3. Simpan data pesanan
             $sqlOrder = "INSERT INTO {$this->table} (
                 user_id, order_number, subtotal, shipping_cost, total_amount,
@@ -68,7 +75,7 @@ class Order extends Model
                 'shipping_cost'             => $shippingCost,
                 'total_amount'              => $totalAmount,
                 'shipping_address_snapshot' => json_encode($orderData['shipping_address'], JSON_UNESCAPED_UNICODE),
-                'shipping_method'           => $shippingRate['courier'] . ' - ' . $shippingRate['service'],
+                'shipping_method'           => $shippingMethod,
                 'pickup_at_event'           => !empty($orderData['pickup_at_event']) ? 1 : 0,
                 'event_id'                  => $orderData['event_id'] ?? null,
                 'notes'                     => $orderData['notes'] ?? null,
@@ -128,15 +135,15 @@ class Order extends Model
                 'id'         => $orderId,
             ]);
 
-            // 9. Buat placeholder shipment
+            // 9. Buat placeholder shipment (potong ke 50 char agar tidak truncate error)
             $stmtShipment = $this->db->prepare("
                 INSERT INTO shipments (order_id, courier, service, status, created_at, updated_at)
                 VALUES (:order_id, :courier, :service, 'diproses', NOW(), NOW())
             ");
             $stmtShipment->execute([
                 'order_id' => $orderId,
-                'courier'  => $shippingRate['courier'],
-                'service'  => $shippingRate['service'],
+                'courier'  => mb_substr($courierName, 0, 50),
+                'service'  => mb_substr($serviceName, 0, 50),
             ]);
 
             $this->db->commit();

@@ -219,11 +219,11 @@ class ShopController extends Controller
             $pickupLoc = $this->request->input('pickup_location') ?: $this->request->input('event_id');
             $eventId = (is_numeric($pickupLoc) && (int)$pickupLoc > 0) ? (int)$pickupLoc : null;
             $locationLabel = $eventId 
-                ? 'Ambil Langsung di Lokasi Acara Penanaman Hari-H' 
-                : 'Ambil Sendiri ke Kedai / Roastery andu (Cicalengka)';
+                ? 'Ambil di Lokasi Acara Penanaman' 
+                : 'Ambil di Kedai / Roastery andu';
 
             $shippingRate = [
-                'courier' => 'Ambil Sendiri ke Kedai / Acara',
+                'courier' => 'Ambil Sendiri',
                 'service' => $locationLabel,
                 'cost'    => 0,
             ];
