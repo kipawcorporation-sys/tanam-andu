@@ -53,8 +53,10 @@ class Controller
         require $viewFile;
         $content = ob_get_clean();
 
-        // Tentukan layout yang digunakan
-        $layoutName = $layout ?? $this->layout;
+        // Tentukan layout yang digunakan:
+        // Jika argumen ke-3 diberikan secara eksplisit (misal null atau ''), jangan gunakan layout default ($this->layout).
+        // Jika hanya 2 argumen dipanggil ($this->view($view, $data)), gunakan layout default ($this->layout).
+        $layoutName = (func_num_args() >= 3) ? $layout : $this->layout;
 
         if ($layoutName) {
             $layoutFile = VIEW_PATH . '/' . str_replace('.', '/', $layoutName) . '.php';

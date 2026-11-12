@@ -496,6 +496,7 @@ class DashboardController extends Controller
         }
 
         // Render view sertifikat mandiri tanpa layout dashboard (clean printable)
+        $this->layout = '';
         $this->view('dashboard/certificate', [
             'pageTitle' => 'Sertifikat ' . e($cert['certificate_number']),
             'cert'      => $cert,

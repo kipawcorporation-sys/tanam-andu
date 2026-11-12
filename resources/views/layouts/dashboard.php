@@ -129,6 +129,18 @@
         .bottom-nav-item.active {
             color: var(--primary);
         }
+        @media print {
+            .sidebar, .topbar, .mobile-bottom-nav, .sidebar-backdrop, .btn, .alert {
+                display: none !important;
+            }
+            .main-content {
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            body {
+                background: #fff !important;
+            }
+        }
         @media (max-width: 991.98px) {
             .sidebar {
                 transform: translateX(-100%);

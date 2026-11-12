@@ -342,7 +342,7 @@ $isFound = !empty($certificate);
    ========================================================= */
 @page {
     size: A4 landscape;
-    margin: 0;
+    margin: 6mm;
 }
 
 @media print {
@@ -351,8 +351,9 @@ $isFound = !empty($certificate);
         background: #fff !important;
         padding: 0 !important;
         margin: 0 !important;
-        width: 297mm !important;
-        height: 210mm !important;
+        width: 100% !important;
+        height: 100% !important;
+        display: block !important;
         overflow: hidden !important;
     }
 
@@ -397,55 +398,85 @@ $isFound = !empty($certificate);
 
     /* Canvas sertifikat: pas A4 landscape */
     .cert-container {
-        width: 281mm !important;
-        height: 194mm !important;
-        margin: 8mm auto !important;
-        padding: 14mm 16mm 10mm !important;
+        width: 100% !important;
+        max-width: 284mm !important;
+        height: 196mm !important;
+        margin: 0 auto !important;
+        padding: 8mm 12mm 5mm !important;
+        box-sizing: border-box !important;
+
         box-shadow: none !important;
-        border-radius: 6px !important;
+        border-radius: 4px !important;
         page-break-inside: avoid !important;
         break-inside: avoid !important;
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+
         overflow: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+    }
+
+    .cert-content {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        height: 100% !important;
+        flex-grow: 1 !important;
     }
 
     /* Border ornament */
     .cert-border-outer {
-        top: 5mm; left: 5mm; right: 5mm; bottom: 5mm;
-        border-width: 2.5pt !important;
+        top: 3.5mm !important; left: 3.5mm !important; right: 3.5mm !important; bottom: 3.5mm !important;
+        border-width: 2pt !important;
     }
     .cert-border-inner {
-        top: 7mm; left: 7mm; right: 7mm; bottom: 7mm;
+        top: 5.5mm !important; left: 5.5mm !important; right: 5.5mm !important; bottom: 5.5mm !important;
+        border-width: 1pt !important;
     }
     .corner-knot {
-        width: 4mm !important;
-        height: 4mm !important;
+        width: 3.5mm !important;
+        height: 3.5mm !important;
     }
-    .ck-tl { top: 6.3mm !important; left: 6.3mm !important; }
-    .ck-tr { top: 6.3mm !important; right: 6.3mm !important; }
-    .ck-bl { bottom: 6.3mm !important; left: 6.3mm !important; }
-    .ck-br { bottom: 6.3mm !important; right: 6.3mm !important; }
+    .ck-tl { top: 4.8mm !important; left: 4.8mm !important; }
+    .ck-tr { top: 4.8mm !important; right: 4.8mm !important; }
+    .ck-bl { bottom: 4.8mm !important; left: 4.8mm !important; }
+    .ck-br { bottom: 4.8mm !important; right: 4.8mm !important; }
 
     /* Watermark */
-    .cert-watermark { width: 140mm !important; }
+    .cert-watermark { width: 130mm !important; }
 
     /* Typography */
-    .cert-title      { font-size: 20pt !important; letter-spacing: 3px !important; }
-    .cert-subtitle   { font-size: 8pt !important; }
-    .cert-recipient  { font-size: 28pt !important; }
-    .cert-text       { font-size: 9.5pt !important; line-height: 1.6 !important; }
-    .cert-presented-to { font-size: 8pt !important; }
+    .cert-logos-bar  { padding-bottom: 4px !important; margin-bottom: 6px !important; }
+    .main-brand-wrap img { height: 38px !important; }
+    .partner-logo-item img { height: 18px !important; }
 
-    /* Logos */
-    .cert-logos-bar  { padding-bottom: 6px !important; margin-bottom: 8px !important; }
-    .partner-logo-item img { height: 20px !important; }
+    .cert-title-group { margin-top: 1px !important; }
+    .cert-title      { font-size: 18pt !important; letter-spacing: 2.5px !important; margin-bottom: 2px !important; }
+    .cert-subtitle   { font-size: 7.5pt !important; letter-spacing: 1.2px !important; }
+
+    .cert-body       { padding: 2px 14px !important; }
+    .cert-presented-to { font-size: 7.5pt !important; margin-bottom: 4px !important; }
+    .cert-recipient  { font-size: 25pt !important; margin-bottom: 8px !important; padding: 0 16px 3px !important; }
+    .cert-text       { font-size: 9pt !important; line-height: 1.5 !important; max-width: 230mm !important; }
 
     /* Footer */
-    .cert-qr img     { width: 56px !important; height: 56px !important; }
-    .seal-circle     { width: 60px !important; height: 60px !important; }
-    .sig-handwritten { font-size: 15pt !important; }
-    .sig-line        { width: 48mm !important; }
-    .media-partners-strip img { height: 12px !important; }
-    .cert-meta       { font-size: 7pt !important; }
+    .cert-footer     { padding: 6px 4px 0 !important; }
+    .cert-qr img     { width: 50px !important; height: 50px !important; }
+    .seal-circle     { width: 52px !important; height: 52px !important; }
+    .seal-star       { font-size: 11px !important; }
+    .seal-text-top   { font-size: 7px !important; }
+    .seal-text-bot   { font-size: 6px !important; }
+    .seal-brand      { font-size: 8.5px !important; }
+    .sig-handwritten { font-size: 13pt !important; margin-bottom: 2px !important; }
+    .sig-line        { width: 42mm !important; margin-bottom: 3px !important; }
+    .sig-name        { font-size: 9.5pt !important; }
+    .sig-title       { font-size: 7.5pt !important; }
+    .cert-meta       { font-size: 6.5pt !important; }
+
+    .media-partners-strip { padding-top: 4px !important; font-size: 7.5pt !important; }
+    .media-partners-strip img { height: 11px !important; }
 
     /* Paksa browser tampilkan warna & gambar saat print */
     img { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
