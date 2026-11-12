@@ -3,6 +3,10 @@
  * View: admin/certificates.php — Manajemen Sertifikat Digital
  * Platform: Plant For Fun • Kerenceng Coffee Expedition
  */
+
+$unissuedDonations = $unissuedDonations ?? [];
+$unissuedParticipants = $unissuedParticipants ?? [];
+$totalPending = count($unissuedDonations) + count($unissuedParticipants);
 ?>
 
 <style>
@@ -96,6 +100,21 @@
     flex-shrink: 0;
 }
 
+/* Antrean Siap Terbit Card */
+.queue-card {
+    background: #fff;
+    border-radius: 18px;
+    border: 2px solid #86efac;
+    box-shadow: 0 6px 24px rgba(34, 197, 94, 0.12);
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+.queue-header {
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    padding: 16px 24px;
+    border-bottom: 1px solid #a7f3d0;
+}
+
 /* Filter Card */
 .filter-card {
     background: #fff;
@@ -180,11 +199,20 @@
                 Manajemen Sertifikat Digital
             </h2>
             <p class="text-white-50 lead fs-6 mb-0" style="max-width: 680px;">
-                Pantau seluruh sertifikat penghargaan donasi pohon & partisipasi relawan ekspedisi. Dilengkapi kode unik dan tautan verifikasi keaslian publik secara real-time.
+                Terbitkan sertifikat penghargaan donasi pohon & relawan lapangan dengan 1 kali klik. Dilengkapi verifikasi QR code dan nomor seri resmi.
             </p>
         </div>
 
         <div class="d-flex flex-wrap gap-2 align-items-center">
+            <?php if ($totalPending > 0): ?>
+            <form method="POST" action="/admin/sertifikat/terbitkan-semua" onsubmit="return confirm('Terbitkan sekaligus <?= $totalPending ?> sertifikat yang belum terbit?')">
+                <?= csrf_field() ?>
+                <button type="submit" class="btn btn-warning fw-bold px-3 py-2 rounded-3 shadow-sm text-dark d-inline-flex align-items-center gap-2">
+                    <i class="bi bi-lightning-charge-fill text-danger"></i> Terbitkan Semua Sekaligus (<?= $totalPending ?>)
+                </button>
+            </form>
+            <?php endif; ?>
+
             <a href="/admin/sertifikat/export-csv" class="btn-export-csv">
                 <i class="bi bi-filetype-csv"></i> Ekspor CSV
             </a>
@@ -238,19 +266,123 @@
 
     <div class="col-sm-6 col-xl-3">
         <div class="metric-box">
-            <div class="metric-icon-wrap" style="background: rgba(245, 158, 11, 0.12); color: #b45309;">
-                <i class="bi bi-calendar-check-fill"></i>
+            <div class="metric-icon-wrap" style="background: <?= $totalPending > 0 ? 'rgba(239, 68, 68, 0.12)' : 'rgba(245, 158, 11, 0.12)' ?>; color: <?= $totalPending > 0 ? '#b91c1c' : '#b45309' ?>;">
+                <i class="bi bi-hourglass-split"></i>
             </div>
             <div>
-                <div class="text-muted small fw-semibold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.5px;">Bulan Ini</div>
-                <div class="fs-4 fw-bold text-warning font-mono"><?= number_format($stats['bulan_ini']) ?></div>
-                <div class="small text-muted" style="font-size: 0.75rem;">Penerbitan baru</div>
+                <div class="text-muted small fw-semibold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.5px;">Siap Terbit</div>
+                <div class="fs-4 fw-bold font-mono <?= $totalPending > 0 ? 'text-danger' : 'text-warning' ?>"><?= number_format($totalPending) ?></div>
+                <div class="small text-muted" style="font-size: 0.75rem;">Menunggu penerbitan</div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- 3. FILTER & SEARCH BAR -->
+<!-- 3. ANTREAN SIAP TERBIT (1-CLICK ISSUANCE QUEUE) -->
+<?php if ($totalPending > 0): ?>
+<div class="queue-card">
+    <div class="queue-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-danger rounded-pill px-2 py-1 font-mono"><?= $totalPending ?> Menunggu</span>
+            <h6 class="fw-bold text-dark mb-0 fs-6">
+                <i class="bi bi-lightning-charge-fill text-warning me-1"></i> Antrean Siap Diterbitkan (Belum Ada Sertifikat)
+            </h6>
+        </div>
+        <div>
+            <form method="POST" action="/admin/sertifikat/terbitkan-semua" class="d-inline" onsubmit="return confirm('Terbitkan sekaligus seluruh <?= $totalPending ?> sertifikat ini?')">
+                <?= csrf_field() ?>
+                <input type="hidden" name="target" value="all">
+                <button type="submit" class="btn btn-sm btn-success fw-bold rounded-pill px-3 shadow-sm">
+                    <i class="bi bi-check-all me-1"></i> Terbitkan Semua Sekarang
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-custom align-middle mb-0">
+            <thead>
+                <tr>
+                    <th class="ps-4">Kategori</th>
+                    <th>Nama &amp; Kontak</th>
+                    <th>Rincian Kontribusi</th>
+                    <th>Tanggal Transaksi / Kegiatan</th>
+                    <th class="text-end pe-4" style="width: 220px;">Aksi Cepat</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Daftar Donasi Siap Terbit -->
+                <?php foreach ($unissuedDonations as $d): ?>
+                <tr>
+                    <td class="ps-4">
+                        <span class="badge px-2 py-1 badge-donasi" style="font-size: 0.75rem; border-radius: 6px;">
+                            🌱 Donasi Pohon
+                        </span>
+                    </td>
+                    <td>
+                        <div class="fw-bold text-dark"><?= e($d['donor_name']) ?></div>
+                        <div class="text-muted small"><?= e($d['donor_email']) ?></div>
+                    </td>
+                    <td>
+                        <div class="fw-bold text-success"><?= (int)$d['total_trees'] ?> Batang Pohon</div>
+                        <div class="text-muted small">Nominal: Rp <?= number_format($d['total_amount'], 0, ',', '.') ?></div>
+                    </td>
+                    <td>
+                        <div class="small fw-semibold text-dark"><?= date('d M Y', strtotime($d['created_at'])) ?></div>
+                        <div class="text-muted small"><?= date('H:i', strtotime($d['created_at'])) ?> WIB</div>
+                    </td>
+                    <td class="text-end pe-4">
+                        <form method="POST" action="/admin/sertifikat/terbitkan" class="d-inline">
+                            <?= csrf_field() ?>
+                            <input type="hidden" name="donation_id" value="<?= $d['id'] ?>">
+                            <button type="submit" class="btn btn-sm btn-success fw-bold rounded-3 px-3 shadow-sm" title="Terbitkan Sertifikat Donasi Ini">
+                                <i class="bi bi-patch-check-fill me-1"></i> Terbitkan Sertifikat
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+
+                <!-- Daftar Relawan Siap Terbit -->
+                <?php foreach ($unissuedParticipants as $p): ?>
+                <tr>
+                    <td class="ps-4">
+                        <span class="badge px-2 py-1 badge-partisipasi" style="font-size: 0.75rem; border-radius: 6px;">
+                            🙋 Relawan Ekspedisi
+                        </span>
+                    </td>
+                    <td>
+                        <div class="fw-bold text-dark"><?= e($p['participant_name']) ?></div>
+                        <div class="text-muted small"><?= e($p['email']) ?></div>
+                    </td>
+                    <td>
+                        <div class="fw-bold text-primary"><?= e($p['event_title']) ?></div>
+                        <div class="text-muted small">Status Presensi: <span class="badge bg-success-subtle text-success"><?= strtoupper($p['registration_status']) ?></span></div>
+                    </td>
+                    <td>
+                        <div class="small fw-semibold text-dark"><?= date('d M Y', strtotime($p['created_at'])) ?></div>
+                        <?php if (!empty($p['checked_in_at'])): ?>
+                            <div class="text-muted small">Hadir: <?= date('d M H:i', strtotime($p['checked_in_at'])) ?></div>
+                        <?php endif; ?>
+                    </td>
+                    <td class="text-end pe-4">
+                        <form method="POST" action="/admin/sertifikat/terbitkan-relawan" class="d-inline">
+                            <?= csrf_field() ?>
+                            <input type="hidden" name="participant_id" value="<?= $p['id'] ?>">
+                            <button type="submit" class="btn btn-sm btn-primary fw-bold rounded-3 px-3 shadow-sm" title="Terbitkan Sertifikat Relawan Ini">
+                                <i class="bi bi-patch-check-fill me-1"></i> Terbitkan Sertifikat
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+<?php endif; ?>
+
+<!-- 4. FILTER & SEARCH BAR -->
 <div class="filter-card">
     <form method="GET" action="/admin/sertifikat" class="row g-2 align-items-end">
         <div class="col-md-6">
@@ -285,15 +417,15 @@
     </form>
 </div>
 
-<!-- 4. DATA TABLE -->
+<!-- 5. TABEL SERTIFIKAT RESMI DITERBITKAN -->
 <div class="cert-card">
     <div class="p-3 border-bottom d-flex justify-content-between align-items-center bg-light">
         <div class="fw-bold text-dark small">
-            <i class="bi bi-list-task me-1 text-success"></i>
-            Daftar Sertifikat Diterbitkan (<?= number_format($total) ?> data)
+            <i class="bi bi-patch-check-fill me-1 text-success"></i>
+            Daftar Sertifikat Terbit Resmi (<?= number_format($total) ?> data)
         </div>
         <div class="text-muted small">
-            Halaman <?= $page ?> dari <?= $totalPages ?>
+            Halaman <?= $page ?> dari <?= max(1, $totalPages) ?>
         </div>
     </div>
 
@@ -307,7 +439,7 @@
                     <th>Penerima</th>
                     <th>Ringkasan Kontribusi</th>
                     <th class="text-center">Tanggal Terbit</th>
-                    <th class="text-center pe-4" style="width: 130px;">Aksi</th>
+                    <th class="text-center pe-4" style="width: 140px;">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -444,7 +576,7 @@
     <?php endif; ?>
 </div>
 
-<!-- 5. MODAL: Terbitkan Sertifikat Manual (Donasi & Relawan) -->
+<!-- 6. MODAL: Terbitkan Sertifikat Manual (Dengan Dropdown Pilihan Nama) -->
 <div class="modal fade" id="reissueModal" tabindex="-1" aria-labelledby="reissueModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg rounded-4">
@@ -459,12 +591,12 @@
             <ul class="nav nav-pills nav-fill px-3 pt-2 pb-0 gap-2" id="certTab" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active fw-bold rounded-3 small py-2" id="donasi-tab" data-bs-toggle="pill" data-bs-target="#tab-donasi" type="button" role="tab">
-                        🌱 Donasi Pohon
+                        🌱 Donasi Pohon (<?= count($unissuedDonations) ?>)
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link fw-bold rounded-3 small py-2" id="relawan-tab" data-bs-toggle="pill" data-bs-target="#tab-relawan" type="button" role="tab">
-                        🙋 Relawan Ekspedisi
+                        🙋 Relawan Ekspedisi (<?= count($unissuedParticipants) ?>)
                     </button>
                 </li>
             </ul>
@@ -477,16 +609,29 @@
                         <div class="modal-body pt-3">
                             <div class="p-3 bg-light rounded-3 small text-muted mb-3 border">
                                 <i class="bi bi-info-circle text-success me-1"></i>
-                                Sertifikat donasi diterbitkan dengan rincian spesies pohon, estimasi serapan CO2, dan QR verifikasi resmi. Hanya berlaku untuk donasi berstatus <strong>berhasil</strong>.
+                                Pilih donatur yang ingin diterbitkan sertifikatnya, atau ketik ID donasi secara manual.
+                            </div>
+
+                            <?php if (!empty($unissuedDonations)): ?>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small text-dark">Pilih Donasi yang Belum Bersertifikat:</label>
+                                <select name="donation_id" class="form-select form-select-lg fs-6" id="selectDonation">
+                                    <?php foreach ($unissuedDonations as $d): ?>
+                                    <option value="<?= $d['id'] ?>">
+                                        #<?= $d['id'] ?> — <?= e($d['donor_name']) ?> (<?= $d['total_trees'] ?> Pohon, Rp <?= number_format($d['total_amount'],0,',','.') ?>)
+                                    </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <?php else: ?>
+                            <div class="alert alert-success small py-2 px-3 mb-3">
+                                <i class="bi bi-check-circle me-1"></i> Semua donasi berhasil sudah memiliki sertifikat!
                             </div>
                             <div class="mb-3">
-                                <label class="form-label fw-bold small">ID Transaksi Donasi</label>
-                                <input type="number" name="donation_id" class="form-control"
-                                       placeholder="Contoh: 1, 2, atau 10" min="1" required>
-                                <div class="form-text">
-                                    Cek ID transaksi donasi di menu <a href="/admin/donasi" target="_blank" class="fw-semibold">Manajemen Donasi</a>.
-                                </div>
+                                <label class="form-label fw-bold small">Ketik ID Donasi Manual:</label>
+                                <input type="number" name="donation_id" class="form-control" placeholder="Contoh: 1, 2, atau 10" min="1" required>
                             </div>
+                            <?php endif; ?>
                         </div>
                         <div class="modal-footer border-0 pt-0">
                             <button type="button" class="btn btn-light rounded-3" data-bs-dismiss="modal">Batal</button>
@@ -504,16 +649,29 @@
                         <div class="modal-body pt-3">
                             <div class="p-3 bg-light rounded-3 small text-muted mb-3 border">
                                 <i class="bi bi-info-circle text-primary me-1"></i>
-                                Sertifikat relawan diterbitkan atas partisipasi aksi lapangan ekspedisi penanaman pohon. Jika status peserta belum hadir, sistem akan otomatis menandainya sebagai <strong>hadir</strong>.
+                                Pilih peserta relawan yang ingin diterbitkan sertifikat penghargaannya.
+                            </div>
+
+                            <?php if (!empty($unissuedParticipants)): ?>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small text-dark">Pilih Relawan yang Belum Bersertifikat:</label>
+                                <select name="participant_id" class="form-select form-select-lg fs-6" id="selectParticipant">
+                                    <?php foreach ($unissuedParticipants as $p): ?>
+                                    <option value="<?= $p['id'] ?>">
+                                        #<?= $p['id'] ?> — <?= e($p['participant_name']) ?> (<?= e($p['event_title']) ?>)
+                                    </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <?php else: ?>
+                            <div class="alert alert-success small py-2 px-3 mb-3">
+                                <i class="bi bi-check-circle me-1"></i> Semua relawan yang hadir sudah memiliki sertifikat!
                             </div>
                             <div class="mb-3">
-                                <label class="form-label fw-bold small">ID Pendaftaran Peserta Relawan</label>
-                                <input type="number" name="participant_id" class="form-control"
-                                       placeholder="Contoh: 1, 5, atau 12" min="1" required>
-                                <div class="form-text">
-                                    Cek ID peserta relawan di menu <a href="/admin/peserta" target="_blank" class="fw-semibold">Manajemen Peserta</a>.
-                                </div>
+                                <label class="form-label fw-bold small">Ketik ID Relawan Manual:</label>
+                                <input type="number" name="participant_id" class="form-control" placeholder="Contoh: 1, 5, atau 12" min="1" required>
                             </div>
+                            <?php endif; ?>
                         </div>
                         <div class="modal-footer border-0 pt-0">
                             <button type="button" class="btn btn-light rounded-3" data-bs-dismiss="modal">Batal</button>

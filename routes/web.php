@@ -208,6 +208,7 @@ $router->group(['prefix' => '/admin', 'middleware' => ['admin']], function ($r) 
     $r->get('/sertifikat/export-csv', 'AdminCertificateController@exportCsv');
     $r->post('/sertifikat/terbitkan', 'AdminCertificateController@reissueDonation');
     $r->post('/sertifikat/terbitkan-relawan', 'AdminCertificateController@reissueParticipant');
+    $r->post('/sertifikat/terbitkan-semua', 'AdminCertificateController@batchIssue');
     $r->post('/sertifikat/{id}/cabut', 'AdminCertificateController@revoke');
 
     $r->get('/laporan', 'AdminReportController@index');

@@ -101,17 +101,44 @@ class AdminCertificateController extends Controller
             $stats = $r ?: $stats;
         } catch (\Exception $e) {}
 
+        // Ambil daftar donasi & peserta yang belum memiliki sertifikat (antrean siap terbit)
+        $unissuedDonations = [];
+        $unissuedParticipants = [];
+        try {
+            $unissuedDonations = $db->query("
+                SELECT d.id, d.donor_name, d.donor_email, d.total_trees, d.total_amount, d.created_at
+                FROM donations d
+                LEFT JOIN certificates c ON (c.certifiable_type = 'donation' AND c.certifiable_id = d.id)
+                WHERE d.status = 'berhasil' AND c.id IS NULL
+                ORDER BY d.created_at DESC
+                LIMIT 50
+            ")->fetchAll(PDO::FETCH_ASSOC);
+
+            $unissuedParticipants = $db->query("
+                SELECT p.id, u.name as participant_name, u.email, e.title as event_title, p.registration_status, p.checked_in_at, p.created_at
+                FROM participants p
+                JOIN users u ON u.id = p.user_id
+                JOIN planting_events e ON e.id = p.event_id
+                LEFT JOIN certificates c ON (c.certifiable_type = 'participant' AND c.certifiable_id = p.id)
+                WHERE p.registration_status IN ('hadir', 'terkonfirmasi') AND c.id IS NULL
+                ORDER BY p.created_at DESC
+                LIMIT 50
+            ")->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {}
+
         $totalPages = max(1, (int)ceil($total / $perPage));
 
         $this->view('admin/certificates', [
-            'pageTitle'    => 'Manajemen Sertifikat Digital - Admin',
-            'certificates' => $certificates,
-            'stats'        => $stats,
-            'total'        => $total,
-            'page'         => $page,
-            'totalPages'   => $totalPages,
-            'q'            => $q,
-            'typeFilter'   => $type,
+            'pageTitle'            => 'Manajemen Sertifikat Digital - Admin',
+            'certificates'         => $certificates,
+            'stats'                => $stats,
+            'total'                => $total,
+            'page'                 => $page,
+            'totalPages'           => $totalPages,
+            'q'                    => $q,
+            'typeFilter'           => $type,
+            'unissuedDonations'    => $unissuedDonations,
+            'unissuedParticipants' => $unissuedParticipants,
         ]);
     }
 
@@ -197,6 +224,69 @@ class AdminCertificateController extends Controller
 
         } catch (\Exception $e) {
             Session::flash('error', 'Gagal menerbitkan sertifikat relawan: ' . $e->getMessage());
+        }
+
+        $this->redirect('/admin/sertifikat');
+    }
+
+    /**
+     * Terbitkan semua sertifikat yang belum terbit secara batch (sekali klik)
+     */
+    public function batchIssue(): void
+    {
+        if (!$this->isPost()) { $this->redirect('/admin/sertifikat'); return; }
+
+        $db = Database::getInstance()->getConnection();
+        $target = $this->request->input('target', 'all');
+
+        $countDonation = 0;
+        $countParticipant = 0;
+
+        if ($target === 'all' || $target === 'donations') {
+            try {
+                $donations = $db->query("
+                    SELECT d.id, d.user_id
+                    FROM donations d
+                    LEFT JOIN certificates c ON (c.certifiable_type = 'donation' AND c.certifiable_id = d.id)
+                    WHERE d.status = 'berhasil' AND c.id IS NULL
+                ")->fetchAll(PDO::FETCH_ASSOC);
+
+                foreach ($donations as $d) {
+                    try {
+                        $this->certModel->issueDonationCertificate((int)$d['id'], (int)$d['user_id']);
+                        $countDonation++;
+                    } catch (\Exception $e) {}
+                }
+            } catch (\Exception $e) {}
+        }
+
+        if ($target === 'all' || $target === 'participants') {
+            try {
+                $participants = $db->query("
+                    SELECT p.id, p.user_id, p.registration_status
+                    FROM participants p
+                    LEFT JOIN certificates c ON (c.certifiable_type = 'participant' AND c.certifiable_id = p.id)
+                    WHERE p.registration_status IN ('hadir', 'terkonfirmasi') AND c.id IS NULL
+                ")->fetchAll(PDO::FETCH_ASSOC);
+
+                foreach ($participants as $p) {
+                    try {
+                        if ($p['registration_status'] !== 'hadir') {
+                            $db->prepare("UPDATE participants SET registration_status = 'hadir', checked_in_at = COALESCE(checked_in_at, NOW()), updated_at = NOW() WHERE id = :id")
+                               ->execute(['id' => $p['id']]);
+                        }
+                        $this->certModel->issueParticipantCertificate((int)$p['id'], (int)$p['user_id']);
+                        $countParticipant++;
+                    } catch (\Exception $e) {}
+                }
+            } catch (\Exception $e) {}
+        }
+
+        $totalIssued = $countDonation + $countParticipant;
+        if ($totalIssued > 0) {
+            Session::flash('success', "Berhasil menerbitkan {$totalIssued} sertifikat secara otomatis ({$countDonation} donasi, {$countParticipant} relawan)!");
+        } else {
+            Session::flash('info', 'Semua donasi dan relawan yang memenuhi syarat sudah memiliki sertifikat.');
         }
 
         $this->redirect('/admin/sertifikat');
