@@ -320,21 +320,56 @@ $isFound = !empty($certificate);
     font-weight: 600;
 }
 
-/* Bottom Partner Strip */
-.media-partners-strip {
+/* Bottom Media Partner Strip */
+.media-partner-wrapper {
     display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 10px;
+}
+.media-partner-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 18px;
+    background: #fbfdfb;
+    border: 1px solid rgba(18, 56, 44, 0.12);
+    border-radius: 50px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+}
+.media-partner-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #475569;
+    white-space: nowrap;
+}
+.media-partner-divider {
+    width: 1px;
+    height: 14px;
+    background: rgba(18, 56, 44, 0.2);
+}
+.media-partner-dot {
+    color: #cbd5e1;
+    font-size: 13px;
+    line-height: 1;
+}
+.media-partner-logo-box {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 16px;
-    padding-top: 8px;
-    font-size: 9.5px;
-    color: #94a3b8;
+    height: 24px;
+    padding: 0 2px;
 }
-.media-partners-strip img {
-    height: 16px;
+.media-partner-logo-box img {
+    height: 20px;
+    max-height: 20px;
     width: auto;
+    max-width: 90px;
     object-fit: contain;
-    opacity: 0.85;
+    opacity: 0.9;
 }
 
 /* =========================================================
@@ -475,8 +510,50 @@ $isFound = !empty($certificate);
     .sig-title       { font-size: 7.5pt !important; }
     .cert-meta       { font-size: 6.5pt !important; }
 
-    .media-partners-strip { padding-top: 4px !important; font-size: 7.5pt !important; }
-    .media-partners-strip img { height: 11px !important; }
+    .media-partner-wrapper {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        padding-top: 2mm !important;
+    }
+    .media-partner-pill {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 3mm !important;
+        padding: 0.8mm 4mm !important;
+        border: 0.5pt solid rgba(18, 56, 44, 0.15) !important;
+        border-radius: 50px !important;
+        background: #fff !important;
+    }
+    .media-partner-label {
+        font-size: 6.5pt !important;
+        letter-spacing: 1.2px !important;
+        color: #475569 !important;
+        font-weight: 700 !important;
+    }
+    .media-partner-divider {
+        width: 0.5pt !important;
+        height: 3.5mm !important;
+        background: rgba(18, 56, 44, 0.2) !important;
+    }
+    .media-partner-dot {
+        font-size: 7pt !important;
+        color: #94a3b8 !important;
+    }
+    .media-partner-logo-box {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        height: 5mm !important;
+    }
+    .media-partner-logo-box img {
+        height: 4.8mm !important;
+        max-height: 4.8mm !important;
+        width: auto !important;
+        max-width: 24mm !important;
+        object-fit: contain !important;
+        opacity: 1 !important;
+    }
 
     /* Paksa browser tampilkan warna & gambar saat print */
     img { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -656,10 +733,18 @@ $isFound = !empty($certificate);
                                         </div>
 
                                         <!-- Media Partner Strip -->
-                                        <div class="media-partners-strip">
-                                            <span>Media Partner:</span>
-                                            <img src="<?= asset('assets/images/logo-clkpny.png') ?>" alt="CLK.PNY (Tjitjalengka Poenja)" title="CLK.PNY (Tjitjalengka Poenja)">
-                                            <img src="<?= asset('assets/images/logo-cicalengka-go.png') ?>" alt="Cicalengka GO" title="Cicalengka GO">
+                                        <div class="media-partner-wrapper">
+                                            <div class="media-partner-pill">
+                                                <span class="media-partner-label">Media Partner</span>
+                                                <span class="media-partner-divider"></span>
+                                                <div class="media-partner-logo-box" title="CLK.PNY (Tjitjalengka Poenja)">
+                                                    <img src="<?= asset('assets/images/logo-clkpny.png') ?>" alt="CLK.PNY (Tjitjalengka Poenja)">
+                                                </div>
+                                                <div class="media-partner-dot">&bull;</div>
+                                                <div class="media-partner-logo-box" title="Cicalengka GO">
+                                                    <img src="<?= asset('assets/images/logo-cicalengka-go.png') ?>" alt="Cicalengka GO">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
