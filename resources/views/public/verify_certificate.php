@@ -18,7 +18,7 @@ $isFound = !empty($certificate);
         </div>
         <h1 class="display-5 fw-bold font-poster mb-3">Verifikasi Keaslian Sertifikat</h1>
         <p class="lead text-light opacity-90 mx-auto mb-4" style="max-width: 650px;">
-            Pastikan keabsahan sertifikat donasi pohon dan partisipasi relawan yang diterbitkan resmi oleh platform TanamPohon.id.
+            Pastikan keabsahan sertifikat donasi pohon dan partisipasi relawan yang diterbitkan resmi oleh <strong>Plant For Fun &bull; Kerenceng Coffee Expedition</strong>.
         </p>
 
         <!-- Formulir Pencarian Cepat -->
@@ -55,7 +55,7 @@ $isFound = !empty($certificate);
                         <div>
                             <h5 class="alert-heading fw-bold mb-1">Sertifikat Sah & Terdaftar Resmi!</h5>
                             <p class="mb-0 small text-success-emphasis">
-                                Dokumen dengan nomor seri <strong><?= e($certificate['certificate_number']) ?></strong> terdata secara autentik dalam basis data konservasi TanamPohon.id.
+                                Dokumen dengan nomor seri <strong><?= e($certificate['certificate_number']) ?></strong> terdata secara autentik dalam basis data resmi <strong>Plant For Fun &bull; Kerenceng Coffee Expedition</strong>.
                             </p>
                         </div>
                     </div>
@@ -68,15 +68,18 @@ $isFound = !empty($certificate);
                         </div>
 
                         <div class="position-relative" style="z-index: 1;">
-                            <div class="d-flex justify-content-between align-items-center border-bottom pb-4 mb-4">
-                                <div class="d-flex align-items-center">
-                                    <span class="fs-2 me-2">🌱</span>
-                                    <div>
-                                        <h4 class="fw-bold text-success mb-0">Tanam<span class="text-dark">Pohon</span>.id</h4>
-                                        <div class="small text-muted">Platform Konservasi Alam Indonesia</div>
+                            <div class="d-flex flex-wrap justify-content-between align-items-center border-bottom pb-4 mb-4 gap-3">
+                                <div class="d-flex flex-wrap align-items-center gap-3">
+                                    <img src="<?= asset('assets/images/logo-plant-for-fun.svg') ?>" alt="Plant For Fun" style="height: 44px; width: auto;">
+                                    <div class="d-none d-sm-block vr" style="height: 34px; opacity: 0.25;"></div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="small text-muted fw-bold font-monospace" style="font-size: 10px; text-transform: uppercase;">Presented by:</span>
+                                        <img src="<?= asset('assets/images/logo-andu.png') ?>" alt="andu" title="andu" style="height: 22px; width: auto; object-fit: contain;">
+                                        <img src="<?= asset('assets/images/logo-karsa-kerentjeng.png') ?>" alt="Karsa Kerentjeng" title="Karsa Kerentjeng" style="height: 24px; width: auto; object-fit: contain;">
+                                        <img src="<?= asset('assets/images/logo-ethera.png') ?>" alt="Ethera" title="Ethera" style="height: 18px; width: auto; object-fit: contain;">
                                     </div>
                                 </div>
-                                <div class="text-end">
+                                <div>
                                     <span class="badge bg-success-subtle border border-success-subtle rounded-pill px-3 py-2 fw-semibold" style="color:#0a3622;">
                                         <?= strtoupper($certificate['type'] === 'donasi' ? 'Sertifikat Donasi' : 'Sertifikat Relawan') ?>
                                     </span>
@@ -153,15 +156,27 @@ $isFound = !empty($certificate);
                             <!-- Tanda Tangan & QR -->
                             <div class="d-flex justify-content-between align-items-end pt-3">
                                 <div>
-                                    <div class="small text-muted mb-1">Diverifikasi secara digital oleh:</div>
-                                    <div class="fw-bold text-dark fs-6"><?= htmlspecialchars($data['signer_name'] ?? 'Direktur TanamPohon.id') ?></div>
-                                    <div class="small text-muted"><?= htmlspecialchars($data['signer_title'] ?? 'Koordinator Program') ?></div>
+                                    <div class="small text-muted mb-1">Diverifikasi secara resmi oleh:</div>
+                                    <div class="fw-bold text-dark fs-6"><?= htmlspecialchars($data['signer_name'] ?? 'Koordinator Ekspedisi Kerenceng') ?></div>
+                                    <div class="small text-muted"><?= htmlspecialchars($data['signer_title'] ?? 'Plant For Fun &bull; Kerenceng Expedition') ?></div>
                                 </div>
                                 <div class="text-end">
                                     <div class="p-2 bg-white border rounded-3 d-inline-block shadow-sm">
                                         <i class="bi bi-qr-code fs-1 text-dark"></i>
                                     </div>
                                     <div class="small text-muted mt-1 font-monospace" style="font-size: 11px;">VERIFIED ID</div>
+                                </div>
+                            </div>
+
+                            <!-- Media Partner Footer Strip -->
+                            <div class="border-top pt-3 mt-4 d-flex flex-wrap justify-content-between align-items-center small text-muted">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Media Partner:</span>
+                                    <img src="<?= asset('assets/images/logo-clkpny.png') ?>" alt="CLK.PNY" style="height: 16px; width: auto; object-fit: contain;">
+                                    <img src="<?= asset('assets/images/logo-cicalengka-go.png') ?>" alt="Cicalengka GO" style="height: 16px; width: auto; object-fit: contain;">
+                                </div>
+                                <div class="font-monospace text-success fw-bold" style="font-size: 11px;">
+                                    &bull; 1.550 MDPL &bull; CICALENGKA, JAWA BARAT
                                 </div>
                             </div>
                         </div>
@@ -206,7 +221,7 @@ $isFound = !empty($certificate);
                 <div class="col-lg-6">
                     <h3 class="fw-bold text-dark mb-3">Bagaimana Cara Mengetahui Keaslian Sertifikat?</h3>
                     <p class="text-secondary mb-4">
-                        Setiap sertifikat resmi yang dikeluarkan oleh TanamPohon.id memiliki nomor seri unik yang tertera di bagian kanan atas atau bawah sertifikat, serta QR code yang mengarahkan langsung ke halaman ini.
+                        Setiap sertifikat resmi yang dikeluarkan oleh Plant For Fun memiliki nomor seri unik yang tertera di bagian kanan atas atau bawah sertifikat, serta QR code yang mengarahkan langsung ke halaman ini.
                     </p>
 
                     <div class="d-flex flex-column gap-3">
