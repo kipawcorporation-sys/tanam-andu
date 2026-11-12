@@ -16,6 +16,7 @@ class AdminCertificateController extends Controller
     public function __construct()
     {
         parent::__construct();
+        $this->layout = 'layouts/admin';
         $this->certModel = new Certificate();
     }
 
@@ -104,7 +105,6 @@ class AdminCertificateController extends Controller
 
         $this->view('admin/certificates', [
             'pageTitle'    => 'Manajemen Sertifikat Digital - Admin',
-            'layout'       => 'admin',
             'certificates' => $certificates,
             'stats'        => $stats,
             'total'        => $total,
@@ -234,3 +234,4 @@ class AdminCertificateController extends Controller
         exit;
     }
 }
+
