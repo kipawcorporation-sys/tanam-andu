@@ -89,9 +89,15 @@ if [ "$1" == "--backup" ] || [ "$1" == "-b" ]; then
     fi
 fi
 
-# 5. Build Ulang & Jalankan Container
-echo -e "\n${YELLOW}[5/7] Melakukan build & restart container...${NC}"
-$DOCKER_COMPOSE up -d --build --remove-orphans
+# 5. Jalankan Container (atau Build Ulang jika diminta)
+if [[ "$*" == *"--build"* ]]; then
+    echo -e "\n${YELLOW}[5/7] Membangun ulang (build) image container...${NC}"
+    $DOCKER_COMPOSE up -d --build --remove-orphans
+else
+    echo -e "\n${YELLOW}[5/7] Menerapkan perubahan & me-restart container...${NC}"
+    $DOCKER_COMPOSE up -d --remove-orphans
+    $DOCKER_COMPOSE restart app web cron
+fi
 
 # 6. Verifikasi Health & Status
 echo -e "\n${YELLOW}[6/7] Menunggu container aktif dan sehat...${NC}"
