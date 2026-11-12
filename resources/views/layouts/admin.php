@@ -387,6 +387,12 @@
             <i class="bi bi-question-circle"></i> Tanya Jawab (FAQ)
         </a>
 
+        <!-- SERTIFIKAT DIGITAL -->
+        <a href="/admin/sertifikat"
+           class="admin-link <?= str_starts_with($cu, '/admin/sertifikat') ? 'active' : '' ?>">
+            <i class="bi bi-patch-check"></i> Sertifikat Digital
+        </a>
+
         <!-- SISTEM -->
         <div class="nav-section mt-2">Sistem & Konfigurasi</div>
         <a href="/admin/laporan"

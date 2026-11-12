@@ -202,6 +202,12 @@ $router->group(['prefix' => '/admin', 'middleware' => ['admin']], function ($r) 
     $r->post('/ongkir/{id}/update', 'AdminShippingController@updateZone');
     $r->post('/ongkir/kota/simpan', 'AdminShippingController@storeCity');
 
+    // Sertifikat Digital
+    $r->get('/sertifikat', 'AdminCertificateController@index');
+    $r->get('/sertifikat/export-csv', 'AdminCertificateController@exportCsv');
+    $r->post('/sertifikat/terbitkan', 'AdminCertificateController@reissueDonation');
+    $r->post('/sertifikat/{id}/cabut', 'AdminCertificateController@revoke');
+
     $r->get('/laporan', 'AdminReportController@index');
 
     $r->get('/pengaturan', 'AdminSettingController@index');
