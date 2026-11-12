@@ -149,10 +149,54 @@ class AdminCertificateController extends Controller
             }
 
             $cert = $this->certModel->issueDonationCertificate($donationId, (int)$donation['user_id']);
-            Session::flash('success', "Sertifikat {$cert['certificate_number']} berhasil diterbitkan.");
+            Session::flash('success', "Sertifikat Donasi {$cert['certificate_number']} berhasil diterbitkan.");
 
         } catch (\Exception $e) {
-            Session::flash('error', 'Gagal menerbitkan sertifikat: ' . $e->getMessage());
+            Session::flash('error', 'Gagal menerbitkan sertifikat donasi: ' . $e->getMessage());
+        }
+
+        $this->redirect('/admin/sertifikat');
+    }
+
+    /**
+     * Terbitkan sertifikat partisipasi relawan secara manual
+     */
+    public function reissueParticipant(): void
+    {
+        $participantId = (int)$this->request->input('participant_id');
+        if ($participantId <= 0) {
+            Session::flash('error', 'ID relawan tidak valid.');
+            $this->redirect('/admin/sertifikat');
+            return;
+        }
+
+        $db = Database::getInstance()->getConnection();
+
+        try {
+            $stmt = $db->prepare("SELECT id, user_id, registration_status FROM participants WHERE id = :id LIMIT 1");
+            $stmt->execute(['id' => $participantId]);
+            $participant = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$participant) {
+                Session::flash('error', 'Data pendaftaran relawan tidak ditemukan.');
+                $this->redirect('/admin/sertifikat');
+                return;
+            }
+
+            // Jika belum hadir, otomatis update jadi hadir
+            if ($participant['registration_status'] !== 'hadir') {
+                $db->prepare("
+                    UPDATE participants 
+                    SET registration_status = 'hadir', checked_in_at = COALESCE(checked_in_at, NOW()), updated_at = NOW()
+                    WHERE id = :id
+                ")->execute(['id' => $participantId]);
+            }
+
+            $cert = $this->certModel->issueParticipantCertificate($participantId, (int)$participant['user_id']);
+            Session::flash('success', "Sertifikat Relawan {$cert['certificate_number']} berhasil diterbitkan.");
+
+        } catch (\Exception $e) {
+            Session::flash('error', 'Gagal menerbitkan sertifikat relawan: ' . $e->getMessage());
         }
 
         $this->redirect('/admin/sertifikat');

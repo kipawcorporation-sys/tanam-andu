@@ -140,6 +140,7 @@ $router->group(['prefix' => '/admin', 'middleware' => ['admin']], function ($r) 
     $r->get('/peserta/export-csv', 'AdminParticipantController@exportCsv');
     $r->post('/peserta/{id}/konfirmasi', 'AdminParticipantController@confirm');
     $r->post('/peserta/{id}/checkin', 'AdminParticipantController@manualCheckin');
+    $r->post('/peserta/{id}/terbitkan-sertifikat', 'AdminParticipantController@issueCertificate');
     $r->post('/peserta/{id}/batal', 'AdminParticipantController@cancel');
     $r->get('/checkin-qr', 'AdminParticipantController@qrScanner');
     $r->post('/checkin-qr/proses', 'AdminParticipantController@processCheckin');
@@ -206,6 +207,7 @@ $router->group(['prefix' => '/admin', 'middleware' => ['admin']], function ($r) 
     $r->get('/sertifikat', 'AdminCertificateController@index');
     $r->get('/sertifikat/export-csv', 'AdminCertificateController@exportCsv');
     $r->post('/sertifikat/terbitkan', 'AdminCertificateController@reissueDonation');
+    $r->post('/sertifikat/terbitkan-relawan', 'AdminCertificateController@reissueParticipant');
     $r->post('/sertifikat/{id}/cabut', 'AdminCertificateController@revoke');
 
     $r->get('/laporan', 'AdminReportController@index');

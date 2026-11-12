@@ -410,8 +410,8 @@ $pctHadir     = $totalAll > 0 ? round(($hadirCount / $totalAll) * 100, 1) : 0;
                     <th>Status</th>
                     <th>Kaos</th>
                     <th>Kode Tiket</th>
-                    <th>Waktu Presensi</th>
-                    <th style="width: 150px;" class="text-end pe-3">Aksi</th>
+                    <th>Presensi &amp; Sertifikat</th>
+                    <th style="width: 170px;" class="text-end pe-3">Aksi</th>
                 </tr>
             </thead>
             <tbody id="participantTableBody">
@@ -483,23 +483,48 @@ $pctHadir     = $totalAll > 0 ? round(($hadirCount / $totalAll) * 100, 1) : 0;
                     </td>
                     <td>
                         <?php if (!empty($p['checked_in_at'])): ?>
-                            <span class="badge bg-success-subtle text-success border border-success-subtle">
+                            <span class="badge bg-success-subtle text-success border border-success-subtle mb-1 d-inline-block">
                                 <i class="bi bi-check2-circle me-1"></i><?= date('d M H:i', strtotime($p['checked_in_at'])) ?>
                             </span>
                         <?php else: ?>
-                            <span class="text-muted small"><i class="bi bi-dash-circle me-1"></i>Belum Hadir</span>
+                            <span class="text-muted small d-block mb-1"><i class="bi bi-dash-circle me-1"></i>Belum Hadir</span>
+                        <?php endif; ?>
+
+                        <?php if (!empty($p['certificate_number'])): ?>
+                            <div>
+                                <a href="/verifikasi-sertifikat/<?= e($p['certificate_number']) ?>" target="_blank"
+                                   class="badge text-decoration-none" style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;font-family:'JetBrains Mono',monospace;font-size:0.72rem;"
+                                   title="Verifikasi Sertifikat Relawan">
+                                    <i class="bi bi-patch-check-fill me-1 text-success"></i><?= e($p['certificate_number']) ?>
+                                </a>
+                            </div>
                         <?php endif; ?>
                     </td>
                     <td class="text-end pe-3">
                         <div class="btn-group btn-group-sm">
                             <?php if ($p['registration_status'] !== 'hadir'): ?>
                                 <form action="/admin/peserta/<?= $p['id'] ?>/checkin" method="POST" class="d-inline"
-                                      onsubmit="return confirm('Tandai peserta \'<?= htmlspecialchars(addslashes($p['participant_name'])) ?>\' sebagai HADIR?')">
+                                      onsubmit="return confirm('Tandai peserta \'<?= htmlspecialchars(addslashes($p['participant_name'])) ?>\' sebagai HADIR dan terbitkan sertifikat?')">
                                     <?= csrf_field() ?>
-                                    <button type="submit" class="btn btn-outline-success" title="Tandai Hadir Manual">
+                                    <button type="submit" class="btn btn-outline-success" title="Tandai Hadir &amp; Terbitkan Sertifikat">
                                         <i class="bi bi-person-check"></i>
                                     </button>
                                 </form>
+                            <?php endif; ?>
+
+                            <?php if (empty($p['certificate_number'])): ?>
+                                <form action="/admin/peserta/<?= $p['id'] ?>/terbitkan-sertifikat" method="POST" class="d-inline"
+                                      onsubmit="return confirm('Terbitkan sertifikat penghargaan relawan untuk \'<?= htmlspecialchars(addslashes($p['participant_name'])) ?>\'?')">
+                                    <?= csrf_field() ?>
+                                    <button type="submit" class="btn btn-outline-warning" title="Terbitkan Sertifikat Relawan">
+                                        <i class="bi bi-patch-check"></i>
+                                    </button>
+                                </form>
+                            <?php else: ?>
+                                <a href="/verifikasi-sertifikat/<?= e($p['certificate_number']) ?>" target="_blank"
+                                   class="btn btn-outline-success" title="Lihat Sertifikat Relawan">
+                                    <i class="bi bi-patch-check-fill"></i>
+                                </a>
                             <?php endif; ?>
 
                             <?php if ($p['registration_status'] === 'menunggu'): ?>

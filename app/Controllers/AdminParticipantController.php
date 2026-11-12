@@ -48,11 +48,13 @@ class AdminParticipantController extends Controller
                 pa.created_at, pa.notes,
                 u.name AS participant_name, u.email, u.phone,
                 e.title AS event_title, e.event_date,
-                t.ticket_code, t.status AS ticket_status
+                t.ticket_code, t.status AS ticket_status,
+                c.certificate_number, c.issued_at AS certificate_issued_at
             FROM participants pa
             LEFT JOIN users u ON u.id = pa.user_id
             LEFT JOIN planting_events e ON e.id = pa.event_id
             LEFT JOIN tickets t ON t.participant_id = pa.id
+            LEFT JOIN certificates c ON (c.certifiable_type = 'participant' AND c.certifiable_id = pa.id)
             $where
             ORDER BY pa.created_at DESC
             LIMIT :lim OFFSET :off
@@ -239,9 +241,19 @@ class AdminParticipantController extends Controller
         $db->prepare("UPDATE tickets SET status = 'used' WHERE id = :id")
            ->execute([':id' => $ticket['ticket_id']]);
 
+        // Otomatis terbitkan sertifikat penghargaan relawan
+        try {
+            require_once __DIR__ . '/../Models/Certificate.php';
+            $certModel = new Certificate();
+            $cert = $certModel->issueParticipantCertificate((int)$ticket['participant_id']);
+            $ticket['certificate_number'] = $cert['certificate_number'] ?? null;
+        } catch (\Exception $e) {
+            // Lanjut jika terjadi kendala minor sertifikat
+        }
+
         echo json_encode([
             'success' => true,
-            'message' => "Check-in berhasil! Selamat datang, {$ticket['participant_name']}.",
+            'message' => "Check-in berhasil! Selamat datang, {$ticket['participant_name']}. Sertifikat relawan telah diterbitkan.",
             'data'    => $ticket,
         ]);
         exit;
@@ -282,7 +294,59 @@ class AdminParticipantController extends Controller
         $db->prepare("UPDATE tickets SET status = 'used' WHERE participant_id = :id")
            ->execute([':id' => $id]);
 
-        Session::flash('success', "Peserta #{$id} berhasil ditandai HADIR.");
+        // Otomatis terbitkan sertifikat relawan
+        $certNum = '';
+        try {
+            require_once __DIR__ . '/../Models/Certificate.php';
+            $certModel = new Certificate();
+            $cert = $certModel->issueParticipantCertificate($id);
+            $certNum = $cert['certificate_number'] ?? '';
+        } catch (\Exception $e) {}
+
+        $msg = "Peserta #{$id} berhasil ditandai HADIR.";
+        if ($certNum) {
+            $msg .= " Sertifikat digital {$certNum} otomatis diterbitkan!";
+        }
+
+        Session::flash('success', $msg);
+        $this->redirect('/admin/peserta');
+    }
+
+    /**
+     * POST /admin/peserta/{id}/terbitkan-sertifikat — Terbitkan manual sertifikat relawan.
+     */
+    public function issueCertificate(int $id): void
+    {
+        if (!$this->isPost()) { $this->redirect('/admin/peserta'); return; }
+
+        $db = Database::getInstance()->getConnection();
+
+        try {
+            // Pastikan peserta ada dan ubah ke 'hadir' jika belum
+            $stmt = $db->prepare("SELECT id, user_id, registration_status FROM participants WHERE id = :id LIMIT 1");
+            $stmt->execute(['id' => $id]);
+            $participant = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$participant) {
+                Session::flash('error', 'Data peserta tidak ditemukan.');
+                $this->redirect('/admin/peserta');
+                return;
+            }
+
+            if ($participant['registration_status'] !== 'hadir') {
+                $db->prepare("UPDATE participants SET registration_status = 'hadir', checked_in_at = COALESCE(checked_in_at, NOW()), updated_at = NOW() WHERE id = :id")
+                   ->execute(['id' => $id]);
+            }
+
+            require_once __DIR__ . '/../Models/Certificate.php';
+            $certModel = new Certificate();
+            $cert = $certModel->issueParticipantCertificate($id);
+
+            Session::flash('success', "Sertifikat Relawan {$cert['certificate_number']} berhasil diterbitkan!");
+        } catch (\Exception $e) {
+            Session::flash('error', 'Gagal menerbitkan sertifikat: ' . $e->getMessage());
+        }
+
         $this->redirect('/admin/peserta');
     }
 

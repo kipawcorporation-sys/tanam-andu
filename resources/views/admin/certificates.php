@@ -444,39 +444,86 @@
     <?php endif; ?>
 </div>
 
-<!-- 5. MODAL: Terbitkan Sertifikat Manual -->
+<!-- 5. MODAL: Terbitkan Sertifikat Manual (Donasi & Relawan) -->
 <div class="modal fade" id="reissueModal" tabindex="-1" aria-labelledby="reissueModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg rounded-4">
-            <div class="modal-header border-0 pb-0">
+            <div class="modal-header border-0 pb-2">
                 <h5 class="modal-title fw-bold" id="reissueModalLabel">
-                    <i class="bi bi-patch-plus-fill me-2 text-success"></i>Terbitkan Sertifikat Donasi
+                    <i class="bi bi-patch-plus-fill me-2 text-success"></i>Terbitkan Sertifikat Manual
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form method="POST" action="/admin/sertifikat/terbitkan">
-                <?= csrf_field() ?>
-                <div class="modal-body pt-3">
-                    <div class="p-3 bg-light rounded-3 small text-muted mb-3 border">
-                        <i class="bi bi-info-circle text-primary me-1"></i>
-                        Sertifikat donasi akan digenerate dengan nomor seri resmi dan data adopsi pohon lengkap. Hanya berlaku untuk donasi berstatus <strong>berhasil</strong>.
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold small">ID Transaksi Donasi</label>
-                        <input type="number" name="donation_id" class="form-control"
-                               placeholder="Contoh: 1, 2, atau 10" min="1" required>
-                        <div class="form-text">
-                            Nomor ID donasi dapat dicek pada menu <a href="/admin/donasi" target="_blank" class="fw-semibold">Manajemen Donasi</a>.
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer border-0 pt-0">
-                    <button type="button" class="btn btn-light rounded-3" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-success fw-bold rounded-3 px-4">
-                        <i class="bi bi-patch-check-fill me-1"></i> Terbitkan Sekarang
+
+            <!-- Tab Navigasi Jenis Sertifikat -->
+            <ul class="nav nav-pills nav-fill px-3 pt-2 pb-0 gap-2" id="certTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active fw-bold rounded-3 small py-2" id="donasi-tab" data-bs-toggle="pill" data-bs-target="#tab-donasi" type="button" role="tab">
+                        🌱 Donasi Pohon
                     </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link fw-bold rounded-3 small py-2" id="relawan-tab" data-bs-toggle="pill" data-bs-target="#tab-relawan" type="button" role="tab">
+                        🙋 Relawan Ekspedisi
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="certTabContent">
+                <!-- FORM 1: SERTIFIKAT DONASI -->
+                <div class="tab-pane fade show active" id="tab-donasi" role="tabpanel">
+                    <form method="POST" action="/admin/sertifikat/terbitkan">
+                        <?= csrf_field() ?>
+                        <div class="modal-body pt-3">
+                            <div class="p-3 bg-light rounded-3 small text-muted mb-3 border">
+                                <i class="bi bi-info-circle text-success me-1"></i>
+                                Sertifikat donasi diterbitkan dengan rincian spesies pohon, estimasi serapan CO2, dan QR verifikasi resmi. Hanya berlaku untuk donasi berstatus <strong>berhasil</strong>.
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small">ID Transaksi Donasi</label>
+                                <input type="number" name="donation_id" class="form-control"
+                                       placeholder="Contoh: 1, 2, atau 10" min="1" required>
+                                <div class="form-text">
+                                    Cek ID transaksi donasi di menu <a href="/admin/donasi" target="_blank" class="fw-semibold">Manajemen Donasi</a>.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-0 pt-0">
+                            <button type="button" class="btn btn-light rounded-3" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-success fw-bold rounded-3 px-4">
+                                <i class="bi bi-patch-check-fill me-1"></i> Terbitkan Sertifikat Donasi
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </form>
+
+                <!-- FORM 2: SERTIFIKAT RELAWAN -->
+                <div class="tab-pane fade" id="tab-relawan" role="tabpanel">
+                    <form method="POST" action="/admin/sertifikat/terbitkan-relawan">
+                        <?= csrf_field() ?>
+                        <div class="modal-body pt-3">
+                            <div class="p-3 bg-light rounded-3 small text-muted mb-3 border">
+                                <i class="bi bi-info-circle text-primary me-1"></i>
+                                Sertifikat relawan diterbitkan atas partisipasi aksi lapangan ekspedisi penanaman pohon. Jika status peserta belum hadir, sistem akan otomatis menandainya sebagai <strong>hadir</strong>.
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small">ID Pendaftaran Peserta Relawan</label>
+                                <input type="number" name="participant_id" class="form-control"
+                                       placeholder="Contoh: 1, 5, atau 12" min="1" required>
+                                <div class="form-text">
+                                    Cek ID peserta relawan di menu <a href="/admin/peserta" target="_blank" class="fw-semibold">Manajemen Peserta</a>.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-0 pt-0">
+                            <button type="button" class="btn btn-light rounded-3" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary fw-bold rounded-3 px-4">
+                                <i class="bi bi-patch-check-fill me-1"></i> Terbitkan Sertifikat Relawan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </div>

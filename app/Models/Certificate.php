@@ -18,10 +18,10 @@ class Certificate extends Model
      * Terbitkan sertifikat donasi digital
      *
      * @param int $donationId
-     * @param int $userId
+     * @param int|null $userId
      * @return array Data sertifikat yang diterbitkan
      */
-    public function issueDonationCertificate(int $donationId, int $userId): array
+    public function issueDonationCertificate(int $donationId, ?int $userId = null): array
     {
         // Cek apakah sudah pernah diterbitkan
         $existing = $this->findByDonationId($donationId);
@@ -34,6 +34,10 @@ class Certificate extends Model
 
         if (!$donation) {
             throw new \Exception('Data donasi tidak ditemukan.');
+        }
+
+        if ($userId === null || $userId <= 0) {
+            $userId = (int)($donation['user_id'] ?? 0);
         }
 
         $certNumber = 'CERT-' . date('Ymd') . '-' . strtoupper(bin2hex(random_bytes(3)));
@@ -94,14 +98,21 @@ class Certificate extends Model
      * Terbitkan sertifikat partisipasi relawan
      *
      * @param int $participantId
-     * @param int $userId
+     * @param int|null $userId
      * @return array Data sertifikat yang diterbitkan
      */
-    public function issueParticipantCertificate(int $participantId, int $userId): array
+    public function issueParticipantCertificate(int $participantId, ?int $userId = null): array
     {
         $existing = $this->findByParticipantId($participantId);
         if ($existing) {
             return $existing;
+        }
+
+        $whereClause = "WHERE p.id = :id";
+        $params = ['id' => $participantId];
+        if ($userId !== null && $userId > 0) {
+            $whereClause .= " AND p.user_id = :user_id";
+            $params['user_id'] = $userId;
         }
 
         $stmtPart = $this->db->prepare("
@@ -112,15 +123,17 @@ class Certificate extends Model
             JOIN planting_events e ON p.event_id = e.id
             LEFT JOIN planting_locations l ON e.location_id = l.id
             JOIN users u ON p.user_id = u.id
-            WHERE p.id = :id AND p.user_id = :user_id
+            {$whereClause}
             LIMIT 1
         ");
-        $stmtPart->execute(['id' => $participantId, 'user_id' => $userId]);
+        $stmtPart->execute($params);
         $part = $stmtPart->fetch(PDO::FETCH_ASSOC);
 
         if (!$part) {
             throw new \Exception('Data pendaftaran relawan tidak ditemukan.');
         }
+
+        $userId = (int)$part['user_id'];
 
         $certNumber = 'CERT-REL-' . date('Ymd') . '-' . strtoupper(bin2hex(random_bytes(3)));
 
