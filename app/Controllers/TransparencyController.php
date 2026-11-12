@@ -503,7 +503,7 @@ class TransparencyController extends Controller
         }
 
         $this->view('public/verify_certificate', [
-            'pageTitle'          => 'Verifikasi Keaslian Sertifikat Resmi - TanamPohon.id',
+            'pageTitle'          => 'Verifikasi Keaslian Sertifikat Resmi — Plant For Fun',
             'certificate'        => null,
             'searchedNumber'     => null,
             'notFound'           => false,
@@ -545,7 +545,7 @@ class TransparencyController extends Controller
         }
 
         $this->view('public/verify_certificate', [
-            'pageTitle'          => 'Hasil Verifikasi Sertifikat ' . e($number) . ' - TanamPohon.id',
+            'pageTitle'          => 'Sertifikat Resmi ' . e($number) . ' — Plant For Fun',
             'certificate'        => $cert ?: null,
             'searchedNumber'     => $number,
             'notFound'           => empty($cert),
