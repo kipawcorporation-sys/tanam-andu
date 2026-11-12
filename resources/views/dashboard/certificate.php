@@ -399,18 +399,21 @@
            ========================================================= */
         @page {
             size: A4 landscape;
-            margin: 6mm;
+            margin: 0;
         }
 
         @media print {
-            /* Reset body jadi putih bersih tanpa padding & margin */
+            /* Reset total — body jadi wadah print penuh */
             html, body {
                 background: #fff !important;
                 padding: 0 !important;
                 margin: 0 !important;
-                width: 100% !important;
-                height: 100% !important;
-                display: block !important;
+                width: 297mm !important;
+                height: 210mm !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: center !important;
                 overflow: hidden !important;
             }
 
@@ -419,17 +422,17 @@
                 display: none !important;
             }
 
-            /* Canvas sertifikat: pas A4 landscape satu halaman penuh */
+            /* Canvas sertifikat: isi penuh halaman A4 landscape */
             .cert-container {
-                width: 100% !important;
-                max-width: 284mm !important;
-                height: 196mm !important;
+                width: 285mm !important;
+                height: 198mm !important;
+                max-width: 285mm !important;
                 margin: 0 auto !important;
-                padding: 8mm 12mm 5mm !important;
+                padding: 7mm 11mm 5mm !important;
                 box-sizing: border-box !important;
 
                 box-shadow: none !important;
-                border-radius: 4px !important;
+                border-radius: 3px !important;
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
                 page-break-after: avoid !important;
